@@ -1,10 +1,18 @@
 const User = require('../models/user')
-const registerNewUser = (req, res) => {
-    console.log(req.body)
-    User.create(req.body)
-    res.json({
-      msg: "registered successfully"
-    })
+const registerNewUser = async(req, res) => {
+    const existingUser = await  User.findOne({email: req.body.email})
+    //if user email already exist, return 403, else create User doc
+    if(existingUser){
+     return res.status(403).json({
+          msg: "User already exist"
+      })
+    }else{
+      await User.create(req.body)
+      res.json({
+        msg: "registered successfully"
+      })
+    }
+   
 }
 
 module.exports = {registerNewUser}
