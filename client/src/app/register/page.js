@@ -6,7 +6,7 @@ import FormSection from '@/components/formSection/page'
 import { CiMail } from "react-icons/ci";
 import {Dropdown,Input, DropdownTrigger, DropdownMenu, DropdownItem, Button} from "@nextui-org/react";
 import { useFormik } from 'formik';
-
+import toast, { Toaster } from 'react-hot-toast';
 const SignupSchema = Yup.object().shape({
   email: Yup.string()
     .min(2, 'Too Short!')
@@ -20,7 +20,7 @@ const SignupSchema = Yup.object().shape({
 });
 
 const roles = ['Project Manager', 'Developer', 'Designer', 'Staff', 'Software Engineer']
-  
+
 const Register = () => {
   const [organization, setOrganization] = useState('gmail')
   const [selectedRole, setSelectedRole] = useState('')
@@ -38,16 +38,34 @@ const Register = () => {
       formik.resetForm()
     }
   });
-  const handleRegister = (inputFields)=>{
-    fetch('http://localhost:5000/register/',{
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(inputFields)
-    })
+  const handleRegister = async(inputFields)=>{
+    try{
+      const res = await fetch('http://localhost:5000/register/',{
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(inputFields)
+      })
+      const data = await res.json()
+      toast(data.msg,
+          {
+            icon: res.status == 200 ? '✅' : '❌',
+            style: {
+              borderRadius: '10px',
+              background: '#333',
+              color: '#fff',
+            },
+          }
+        );
+    }catch(err){
+      console.log(err)
+    }
+  
   }
   return(
   <FormSection>
     <h1>Signup</h1>
+      <Toaster />
+
     <Formik
       validationSchema={SignupSchema}
     >
