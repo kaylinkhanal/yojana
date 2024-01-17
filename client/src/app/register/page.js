@@ -2,6 +2,7 @@
 import React , {useState} from 'react';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
+
 import FormSection from '@/components/formSection/page'
 import { CiMail } from "react-icons/ci";
 import {Dropdown,Input, DropdownTrigger, DropdownMenu, DropdownItem, Button} from "@nextui-org/react";
@@ -22,6 +23,7 @@ const SignupSchema = Yup.object().shape({
 const roles = ['Project Manager', 'Developer', 'Designer', 'Staff', 'Software Engineer']
 
 const Register = () => {
+
   const [organization, setOrganization] = useState('gmail')
   const [selectedRole, setSelectedRole] = useState('')
   const formik = useFormik({
@@ -46,7 +48,8 @@ const Register = () => {
         body: JSON.stringify(inputFields)
       })
       const data = await res.json()
-      toast(data.msg,
+
+      toast( res.status == 200 ? data.msg+ '. Please login': data.msg,
           {
             icon: res.status == 200 ? '✅' : '❌',
             style: {
@@ -56,6 +59,7 @@ const Register = () => {
             },
           }
         );
+ 
     }catch(err){
       console.log(err)
     }
