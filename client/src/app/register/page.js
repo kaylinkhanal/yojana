@@ -5,7 +5,7 @@ import * as Yup from 'yup';
 import FormSection from '@/components/formSection/page'
 import { CiMail } from "react-icons/ci";
 import {Dropdown,Input, DropdownTrigger, DropdownMenu, DropdownItem, Button} from "@nextui-org/react";
-
+import { useFormik } from 'formik';
 
 const SignupSchema = Yup.object().shape({
   email: Yup.string()
@@ -24,7 +24,20 @@ const roles = ['Project Manager', 'Developer', 'Designer', 'Staff', 'Software En
 const Register = () => {
   const [organization, setOrganization] = useState('gmail')
   const [selectedRole, setSelectedRole] = useState('')
-
+  const formik = useFormik({
+    initialValues: {
+      email: '',
+      password: '',
+      organization: '',
+      role: ''
+    },
+    onSubmit: values => {
+      values.role = selectedRole
+      values.email=values.email+'@'+organization+'.com'
+      handleRegister(values);
+      formik.resetForm()
+    }
+  });
   const handleRegister = (inputFields)=>{
     fetch('http://localhost:5000/register/',{
       method: 'POST',
@@ -36,36 +49,27 @@ const Register = () => {
   <FormSection>
     <h1>Signup</h1>
     <Formik
-      initialValues={{
-        email: '',
-        password: '',
-        organization: '',
-        role: ''
-      }}
       validationSchema={SignupSchema}
-      onSubmit={values => {
-        values.role = selectedRole
-        values.email=values.email+'@'+organization+'.com'
-        handleRegister(values);
-      }}
     >
-      {({ errors, touched,handleChange }) => (
-        <Form>
+      {({ errors, touched }) => (
+        <Form onSubmit={formik.handleSubmit}>
       <Input
           type="organization"
           name="organization"
           label="Organization"
           placeholder="Enter Organization"
           labelPlacement="outside"
-          onChange={(e)=> {
-            handleChange(e);
+          value={formik.values.organization}
+          onChange={(e)=> {   
+            formik.handleChange(e);
             setOrganization(e.target.value?.split(' ').join('').toLowerCase())
           }}
         />
         <Input
           label="Email"
           name="email"
-          onChange={handleChange}
+          onChange={ formik.handleChange}
+          value={formik.values.email}
           placeholder="Enter Email"
           labelPlacement="outside"
           startContent={
@@ -84,7 +88,8 @@ const Register = () => {
           <Input
           type="password"
           name="password"
-          onChange={handleChange}
+          value={formik.values.password}
+          onChange={ formik.handleChange}
           label="password"
           placeholder="Enter password"
           labelPlacement="outside"
