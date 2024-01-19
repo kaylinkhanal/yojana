@@ -2,13 +2,15 @@
 import React , {useState} from 'react';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
-
+import toast from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
 import FormSection from '@/components/formSection/page'
 import { CiMail } from "react-icons/ci";
 import {Dropdown,Input, DropdownTrigger, DropdownMenu, DropdownItem, Button} from "@nextui-org/react";
 import { useFormik } from 'formik';
-import toast, { Toaster } from 'react-hot-toast';
+
 const SignupSchema = Yup.object().shape({
+
   email: Yup.string()
     .min(2, 'Too Short!')
     .max(50, 'Too Long!')
@@ -23,16 +25,15 @@ const SignupSchema = Yup.object().shape({
 const roles = ['Project Manager', 'Developer', 'Designer', 'Staff', 'Software Engineer']
 
 const Register = () => {
-
+  const router = useRouter()
   const [organization, setOrganization] = useState('gmail')
   const [selectedRole, setSelectedRole] = useState('')
   const formik = useFormik({
     initialValues: {
       email: '',
-      password: '',
-      organization: '',
-      role: ''
+      password:''
     },
+    validationSchema:SignupSchema,
     onSubmit: values => {
       values.role = selectedRole
       values.email=values.email+'@'+organization+'.com'
@@ -49,7 +50,7 @@ const Register = () => {
       })
       const data = await res.json()
 
-      toast( res.status == 200 ? data.msg+ '. Please login': data.msg,
+      toast( data.msg,
           {
             icon: res.status == 200 ? '✅' : '❌',
             style: {
@@ -59,7 +60,7 @@ const Register = () => {
             },
           }
         );
- 
+        if(res.status == 200) router.push('/login')
     }catch(err){
       console.log(err)
     }
@@ -68,14 +69,11 @@ const Register = () => {
   return(
   <FormSection>
     <h1>Signup</h1>
-      <Toaster />
 
-    <Formik
-      validationSchema={SignupSchema}
-    >
-      {({ errors, touched }) => (
-        <Form onSubmit={formik.handleSubmit}>
-      <Input
+
+   
+        <form onSubmit={formik.handleSubmit}>
+        <Input
           type="organization"
           name="organization"
           label="Organization"
@@ -88,6 +86,7 @@ const Register = () => {
           }}
         />
         <Input
+        id="email"
           label="Email"
           name="email"
           onChange={ formik.handleChange}
@@ -103,9 +102,7 @@ const Register = () => {
             </div>
           }
         />
-          {errors.email && touched.email ? (
-            <div>{errors.email}</div>
-          ) : null}
+       {formik?.errors.email}
           <br/>
           <Input
           type="password"
@@ -116,9 +113,8 @@ const Register = () => {
           placeholder="Enter password"
           labelPlacement="outside"
         />
-          {errors.password && touched.password ? (
-            <div>{errors.password}</div>
-          ) : null}
+       {formik?.errors.password}
+       
           <br/>
           <Dropdown >
             <DropdownTrigger >
@@ -141,11 +137,10 @@ const Register = () => {
           <Button  type="submit" color="primary" variant="flat">
         Register
       </Button>  
-
-        </Form>
-      )}
-    </Formik>
+        </form>
   </FormSection>
 )}
 
 export default Register
+
+
