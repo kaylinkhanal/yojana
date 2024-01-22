@@ -45,7 +45,7 @@ const Register = () => {
 
       toast( data.msg,
           {
-            icon: res.status == 200 ? '✅' : '❌',
+            icon: res.status == 201 ? '✅' : '❌',
             style: {
               borderRadius: '10px',
               background: '#333',
