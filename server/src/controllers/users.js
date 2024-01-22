@@ -1,5 +1,8 @@
 const User = require('../models/user')
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
+
 const saltRounds = 10;
 const registerNewUser = async(req, res) => {
   try{
@@ -22,4 +25,10 @@ const registerNewUser = async(req, res) => {
   }
 }
 
-module.exports = {registerNewUser}
+
+const loginUser = async (req, res) => {
+  console.log("Test")
+    res.cookie('test', 'test');
+    res.send("Cookie Set");
+}
+module.exports = {loginUser}

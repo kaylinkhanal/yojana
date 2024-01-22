@@ -1,11 +1,97 @@
-// app/page.tsx
 'use client'
-import {Button} from '@nextui-org/button'; 
+import React , {useState} from 'react';
+import { Formik, Form, Field } from 'formik';
+import * as Yup from 'yup';
+import toast from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
+import FormSection from '@/components/formSection/page'
+import { CiMail } from "react-icons/ci";
+import {Dropdown,Input, DropdownTrigger, DropdownMenu, DropdownItem, Button} from "@nextui-org/react";
+import { useFormik } from 'formik';
 
-export default function Page() {
-  return (
-    <div>
-      <Button>Click me</Button>
-    </div>
-  )
-}
+const SignupSchema = Yup.object().shape({
+  email: Yup.string()
+    .min(2, 'Too Short!')
+    .max(50, 'Too Long!')
+    .required('Required'),
+  password: Yup.string()
+    .min(2, 'Too Short!')
+    .max(50, 'Too Long!')
+    .required('Required'),
+});
+
+
+const Register = () => {
+  const router = useRouter()
+  const formik = useFormik({
+    initialValues: {
+      email: '',
+      password:''
+    },
+    validationSchema:SignupSchema,
+    onSubmit: values => {
+      handleLogin(values);
+      formik.resetForm()
+    }
+  });
+  const handleLogin = async(inputFields)=>{
+    try{
+      const res = await fetch('http://localhost:5000/login/',{
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(inputFields)
+      })
+      const data = await res.json()
+
+      toast( data.msg,
+          {
+            icon: res.status == 200 ? '✅' : '❌',
+            style: {
+              borderRadius: '10px',
+              background: '#333',
+              color: '#fff',
+            },
+          }
+        );
+    }catch(err){
+      console.log(err)
+    }
+  
+  }
+  return(
+  <FormSection>
+    <h1>Login</h1>
+        <form onSubmit={formik.handleSubmit}>
+        
+        <Input
+        id="email"
+          label="Email"
+          name="email"
+          onChange={ formik.handleChange}
+          value={formik.values.email}
+          placeholder="Enter Email"
+          labelPlacement="outside"
+        />
+       {formik?.errors.email}
+          <br/>
+          <Input
+          type="password"
+          name="password"
+          value={formik.values.password}
+          onChange={ formik.handleChange}
+          label="password"
+          placeholder="Enter password"
+          labelPlacement="outside"
+        />
+       {formik?.errors.password}
+          <br/>
+          <Button  type="submit" color="primary" variant="flat">
+        Login
+      </Button>  
+        </form>
+  </FormSection>
+)}
+
+export default Register
+
+
