@@ -1,12 +1,15 @@
+'use client'
 import React from "react";
 import Footer from '@/components/footer/page'
 import Navbar from '@/components/navbar/page'
-
+import { useSelector } from "react-redux";
 export default function App() {
+  const {username} = useSelector(state=>state.user)
   return (
     <>
     <Navbar/>
     <section className="text-gray-600 body-font">
+      {username}
   <div className="container px-5 py-24 mx-auto">
     <div className="flex flex-col text-center w-full mb-20">
       <h2 className="text-xs text-indigo-500 tracking-widest font-medium title-font mb-1">The #1 software development tool used by agile teams</h2>
