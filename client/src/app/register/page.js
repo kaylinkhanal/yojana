@@ -102,6 +102,17 @@ const Register = () => {
             </div>
           }
         />
+         <br/>
+          <Input
+          type="text"
+          name="fullName"
+          value={formik.values.fullName}
+          onChange={ formik.handleChange}
+          label="fullName"
+          placeholder="Enter fullName"
+          labelPlacement="outside"
+        />
+       {formik?.errors.fullName}
        {formik?.errors.email}
           <br/>
           <Input

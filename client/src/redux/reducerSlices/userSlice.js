@@ -1,7 +1,8 @@
 import {  createSlice } from '@reduxjs/toolkit';
 const initialState = {
-  username: 'ram',
-  age:0
+  userDetails: {},
+  token: '',
+  isLoggedIn: false
 };
 
 // Redux Toolkit slice
@@ -9,10 +10,17 @@ export const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    incrementAge: (state) => {
-      state.age = state.age + 1
+    loginUser: (state, actions) => {
+     return { ...state,
+       token : actions.payload.token,
+       userDetails: actions.payload.userDetails,
+       isLoggedIn: true
+    }
+    },
+    logoutUser: (state, actions) => {
+      return {...initialState}
     }
   },
 });
-export const { incrementAge } = userSlice.actions;
+export const { loginUser, logoutUser } = userSlice.actions;
 export default userSlice.reducer;

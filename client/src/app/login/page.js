@@ -8,6 +8,9 @@ import FormSection from '@/components/formSection/page'
 import { CiMail } from "react-icons/ci";
 import {Dropdown,Input, DropdownTrigger, DropdownMenu, DropdownItem, Button} from "@nextui-org/react";
 import { useFormik } from 'formik';
+import { useDispatch } from 'react-redux';
+import { loginUser } from '@/redux/reducerSlices/userSlice'
+
 
 const SignupSchema = Yup.object().shape({
   email: Yup.string()
@@ -21,8 +24,9 @@ const SignupSchema = Yup.object().shape({
 });
 
 
-const Register = () => {
+const Login = () => {
   const router = useRouter()
+  const dispatch = useDispatch()
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -30,6 +34,7 @@ const Register = () => {
     },
     validationSchema:SignupSchema,
     onSubmit: values => {
+      debugger;
       handleLogin(values);
       formik.resetForm()
     }
@@ -42,7 +47,10 @@ const Register = () => {
         body: JSON.stringify(inputFields)
       })
       const data = await res.json()
-
+      if(res.status == 201){
+        dispatch(loginUser(data))
+        router.push('/dashboard')
+      }
       toast( data.msg,
           {
             icon: res.status == 201 ? '✅' : '❌',
@@ -92,6 +100,6 @@ const Register = () => {
   </FormSection>
 )}
 
-export default Register
+export default Login
 
 

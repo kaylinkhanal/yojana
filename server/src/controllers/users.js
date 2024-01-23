@@ -29,18 +29,18 @@ const registerNewUser = async(req, res) => {
 
 const loginUser = async (req, res) => {
   try {
-    const userDetail = await User.findOne({ email: req.body.email });
-    if (userDetail) {
+    const userDetails = await User.findOne({ email: req.body.email });
+    if (userDetails) {
       const matched = await bcrypt.compare(
         req.body.password,
-        userDetail.password
+        userDetails.password
       );
       if (matched) {
         const token = jwt.sign(
-          { email: userDetail.email },
+          { email: userDetails.email },
           process?.env.SECRET_KEY
         );
-        return res.status(201).json({ msg: "Login Successfully", token });
+        return res.status(201).json({ msg: "Login Successfully", token, userDetails });
       } else {
         return res.status(403).json({ msg: "Password didn't match" });
       }
