@@ -10,7 +10,7 @@ import {Dropdown,Input, DropdownTrigger, DropdownMenu, DropdownItem, Button} fro
 import { useFormik } from 'formik';
 import { useDispatch } from 'react-redux';
 import { loginUser } from '@/redux/reducerSlices/userSlice'
-
+import CreatableSelect from 'react-select/creatable';
 
 const SignupSchema = Yup.object().shape({
   email: Yup.string()
@@ -70,12 +70,12 @@ const Login = () => {
   }
   return(
   <FormSection>
-    <h1>Login</h1>
+    <h1>Add Categories</h1>
         <form onSubmit={formik.handleSubmit}>
         
         <Input
-        id="email"
-          label="Email"
+        id="categoryName"
+          label="categoryName"
           name="email"
           onChange={ formik.handleChange}
           value={formik.values.email}
@@ -84,15 +84,8 @@ const Login = () => {
         />
        {formik?.errors.email}
           <br/>
-          <Input
-          type="password"
-          name="password"
-          value={formik.values.password}
-          onChange={ formik.handleChange}
-          label="password"
-          placeholder="Enter password"
-          labelPlacement="outside"
-        />
+                <CreatableSelect isMulti options={[{name:1, label:1}]} />
+
        {formik?.errors.password}
           <br/>
           <Button  type="submit" color="primary" variant="flat">

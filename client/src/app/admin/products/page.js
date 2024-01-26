@@ -24,7 +24,7 @@ const SignupSchema = Yup.object().shape({
 });
 
 
-const Login = () => {
+const Products = () => {
   const router = useRouter()
   const dispatch = useDispatch()
   const formik = useFormik({
@@ -70,12 +70,39 @@ const Login = () => {
   }
   return(
   <FormSection>
-    <h1>Login</h1>
+    <h1>Add Products</h1>
         <form onSubmit={formik.handleSubmit}>
         
         <Input
-        id="email"
-          label="Email"
+        id="productName"
+          label="productName"
+          name="email"
+          onChange={ formik.handleChange}
+          value={formik.values.email}
+          placeholder="Enter Email"
+          labelPlacement="outside"
+        />
+          <Input
+        id="productDescription"
+          label="productDescription"
+          name="productDescription"
+          onChange={ formik.handleChange}
+          value={formik.values.email}
+          placeholder="Enter Email"
+          labelPlacement="outside"
+        />
+          <Input
+        id="productPrice"
+          label="productPrice"
+          name="productPrice"
+          onChange={ formik.handleChange}
+          value={formik.values.email}
+          placeholder="Enter Email"
+          labelPlacement="outside"
+        />
+          <Input
+        id="productName"
+          label="productName"
           name="email"
           onChange={ formik.handleChange}
           value={formik.values.email}
@@ -102,6 +129,6 @@ const Login = () => {
   </FormSection>
 )}
 
-export default Login
+export default Products
 
 

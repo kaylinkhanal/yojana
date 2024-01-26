@@ -52,4 +52,17 @@ const loginUser = async (req, res) => {
   }
 };
 
-module.exports = {loginUser, registerNewUser}
+const getAllUsers = async(req,res)=> {
+  try{
+    console.log(req.query)
+    const count =await User.find().count()
+    const skipCount = 5* (req.query.page-1)
+    const userList = await User.find().limit(5).skip(skipCount)
+    res.json({userList,count})
+  }catch(err){
+    res.status(400).json({ msg: "Failed to Fetch User" });
+  }
+
+}
+
+module.exports = {loginUser, registerNewUser,getAllUsers}
