@@ -1,18 +1,28 @@
-'use client'
-import React, {useEffect, useState} from 'react'
-import Navbar from '@/components/navbar/page'
-import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, User, Chip, Tooltip, getKeyValue} from "@nextui-org/react";
-import { useSelector } from 'react-redux';
-import {columns} from "./data";
-import {Pagination} from "@nextui-org/react";
+"use client";
+import React, { useEffect, useState } from "react";
+import Navbar from "@/components/navbar/page";
+import {
+  Table,
+  TableHeader,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
+  User,
+  Chip,
+  Tooltip,
+  getKeyValue,
+} from "@nextui-org/react";
+import { useSelector } from "react-redux";
+import { columns } from "./data";
+import { Pagination } from "@nextui-org/react";
 const statusColorMap = {
   active: "success",
   paused: "danger",
   vacation: "warning",
 };
 
-const UserTable=(props)=> {
-
+const UserTable = (props) => {
   const renderCell = React.useCallback((user, columnKey) => {
     const cellValue = user[columnKey];
 
@@ -20,7 +30,7 @@ const UserTable=(props)=> {
       case "name":
         return (
           <User
-            avatarProps={{radius: "lg", src: user.avatar}}
+            avatarProps={{ radius: "lg", src: user.avatar }}
             description={user.email}
             name={cellValue}
           >
@@ -31,12 +41,19 @@ const UserTable=(props)=> {
         return (
           <div className="flex flex-col">
             <p className="text-bold text-sm capitalize">{cellValue}</p>
-            <p className="text-bold text-sm capitalize text-default-400">{user.team}</p>
+            <p className="text-bold text-sm capitalize text-default-400">
+              {user.team}
+            </p>
           </div>
         );
       case "status":
         return (
-          <Chip className="capitalize" color={statusColorMap[user.status]} size="sm" variant="flat">
+          <Chip
+            className="capitalize"
+            color={statusColorMap[user.status]}
+            size="sm"
+            variant="flat"
+          >
             {cellValue}
           </Chip>
         );
@@ -55,7 +72,7 @@ const UserTable=(props)=> {
             </Tooltip>
             <Tooltip color="danger" content="Delete user">
               <span className="text-lg text-danger cursor-pointer active:opacity-50">
-               delete
+                delete
               </span>
             </Tooltip>
           </div>
@@ -66,10 +83,13 @@ const UserTable=(props)=> {
   }, []);
 
   return (
-  <Table aria-label="Example table with custom cells">
+    <Table aria-label="Example table with custom cells">
       <TableHeader columns={columns}>
         {(column) => (
-          <TableColumn key={column.uid} align={column.uid === "actions" ? "center" : "start"}>
+          <TableColumn
+            key={column.uid}
+            align={column.uid === "actions" ? "center" : "start"}
+          >
             {column.name}
           </TableColumn>
         )}
@@ -78,37 +98,58 @@ const UserTable=(props)=> {
         {(item) => (
           <TableRow key={item}>
             {(columnKey) => {
-                return (<TableCell > <div className={item?._id === props.currentUserId ? 'p-2 bg-red-100' : null}>{renderCell(item, columnKey)}</div></TableCell>)}}
+              return (
+                <TableCell>
+                  {" "}
+                  <div
+                    className={
+                      item?._id === props.currentUserId
+                        ? "p-2 bg-red-100"
+                        : null
+                    }
+                  >
+                    {renderCell(item, columnKey)}
+                  </div>
+                </TableCell>
+              );
+            }}
           </TableRow>
         )}
       </TableBody>
     </Table>
   );
-}
+};
 
-const page = () => {
-  const {userDetails} = useSelector(state=> state.user)
-    const [userList, setUserList] = useState([])
-    const  [count, setCount] = useState(0)
-    const fetchUserList =async (page=1)=>{
-       const res = await fetch(`http://localhost:5000/users?page=${page}`)
-       const data = await res.json()
-       setUserList(data.userList)
-       setCount(data.count)
-    }
+const Page = () => {
+  const { userDetails } = useSelector((state) => state.user);
+  const [userList, setUserList] = useState([]);
+  const [count, setCount] = useState(0);
+  const fetchUserList = async (page = 1) => {
+    const res = await fetch(`http://localhost:5000/users?page=${page}`);
+    const data = await res.json();
+    setUserList(data.userList);
+    setCount(data.count);
+  };
 
-    useEffect(()=>{
-        fetchUserList()
-    },[])
-  
+  useEffect(() => {
+    fetchUserList();
+  }, []);
+
   return (
     <div>
-        <Navbar/>
-        <UserTable currentUserId = {userDetails._id} userList={userList}/>
-        <Pagination  onChange={(page)=> fetchUserList(page)}	 isCompact showControls total={Math.ceil(count/5)} initialPage={1} />
+      <Navbar />
+      <UserTable currentUserId={userDetails._id} userList={userList} />
+      <Pagination
+        onChange={(page) => fetchUserList(page)}
+        isCompact
+        showControls
+        total={Math.ceil(count / 5) || 1}
+        initialPage={1}
+        loop={true}
+        page={1}
+      />
     </div>
-  )
-}
+  );
+};
 
-export default page
-
+export default Page;
