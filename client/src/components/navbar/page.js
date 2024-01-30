@@ -66,7 +66,9 @@ const page = () => {
                   <p className="font-semibold">{userDetails.email}</p>
                 </DropdownItem>
                 <DropdownItem key="settings">
-                  My Settings
+                <Link color="foreground" href='/profile'>
+                      Profile
+                    </Link>
                 </DropdownItem>
                 <DropdownItem key="team_settings">Team Settings</DropdownItem>
                 <DropdownItem key="analytics">

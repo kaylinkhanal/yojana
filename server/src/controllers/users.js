@@ -54,12 +54,16 @@ const loginUser = async (req, res) => {
 
 const getAllUsers = async(req,res)=> {
   try{
-    console.log(req.query)
+    if(!req.query.page) {
+      const userList = await User.find().select('fullName email')
+      return res.json({userList})
+    }
     const count =await User.find().count()
     const skipCount = 5* (req.query.page-1)
     const userList = await User.find().limit(5).skip(skipCount)
-    res.json({userList,count})
+    return res.json({userList,count})
   }catch(err){
+    console.log(err)
     res.status(400).json({ msg: "Failed to Fetch User" });
   }
 

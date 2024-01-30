@@ -78,7 +78,7 @@ const UserTable=(props)=> {
         {(item) => (
           <TableRow key={item}>
             {(columnKey) => {
-                return (<TableCell > <div className={item?._id === props.currentUserId ? 'p-2 bg-red-100' : null}>{renderCell(item, columnKey)}</div></TableCell>)}}
+                return (<TableCell > <div className={item?._id === props.currentUserId ? 'p-2 bg-blue-100' : null}>{renderCell(item, columnKey)}</div></TableCell>)}}
           </TableRow>
         )}
       </TableBody>
@@ -91,7 +91,7 @@ const page = () => {
     const [userList, setUserList] = useState([])
     const  [count, setCount] = useState(0)
     const fetchUserList =async (page=1)=>{
-       const res = await fetch(`http://localhost:5000/users?page=${page}`)
+       const res = await fetch(`http://localhost:8080/users?page=${page}`)
        const data = await res.json()
        setUserList(data.userList)
        setCount(data.count)
@@ -103,9 +103,8 @@ const page = () => {
   
   return (
     <div>
-        <Navbar/>
         <UserTable currentUserId = {userDetails._id} userList={userList}/>
-        <Pagination  onChange={(page)=> fetchUserList(page)}	 isCompact showControls total={Math.ceil(count/5)} initialPage={1} />
+        <Pagination  onChange={(page)=> fetchUserList(page)}	 isCompact showControls total={Math.ceil(count/5) || 1} page={1} initialPage={1} />
     </div>
   )
 }
