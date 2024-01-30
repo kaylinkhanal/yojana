@@ -20,7 +20,7 @@ const page = () => {
 
   const [userList, setUserList] = useState([]);
   const fetchUserList = async () => {
-    const res = await fetch(`http://localhost:5000/users`);
+    const res = await fetch(`http://localhost:${process.env.NEXT_PUBLIC_API_URL}/users`);
     const data = await res.json();
     setUserList(data.userList);
   };
@@ -31,7 +31,6 @@ const page = () => {
 
   return (
     <>
-      <Navbar />
       <section className="py-8 text-black bg-gray-50">
         <div className="container bg-white p-5 rounded flex items-center gap-8 mb-14">
           <div className="flex items-center gap-4 w-1/2">

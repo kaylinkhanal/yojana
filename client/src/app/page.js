@@ -7,7 +7,6 @@ export default function App() {
   const {username} = useSelector(state=>state.user)
   return (
     <>
-    <Navbar/>
     <section className="text-gray-600 body-font">
       {username}
   <div className="container px-5 py-24 mx-auto">

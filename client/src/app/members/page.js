@@ -125,7 +125,7 @@ const Page = () => {
   const [userList, setUserList] = useState([]);
   const [count, setCount] = useState(0);
   const fetchUserList = async (page = 1) => {
-    const res = await fetch(`http://localhost:5000/users?page=${page}`);
+    const res = await fetch(`http://localhost:${process.env.NEXT_PUBLIC_API_URL}/users?page=${page}`);
     const data = await res.json();
     setUserList(data.userList);
     setCount(data.count);
@@ -137,7 +137,6 @@ const Page = () => {
 
   return (
     <div>
-      <Navbar />
       <UserTable currentUserId={userDetails._id} userList={userList} />
       <Pagination
         onChange={(page) => fetchUserList(page)}
