@@ -86,6 +86,7 @@ console.log(formik)
                     <Input
                       id={item.label}
                       label={item.label}
+                      onBlur={(e)=>props.generateKey(formik.values['projectName'], e)}
                       name={item.label}
                       onChange={ formik.handleChange}
                       value={formik.values[item.label]}
@@ -95,6 +96,7 @@ console.log(formik)
                 )
             })}
           <br/>
+          {props.projectKey && <p>project key: {props.projectKey}</p> }
           <Button  type="submit" color="primary" variant="flat">
         {props.buttonTitle}
       </Button>  

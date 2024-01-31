@@ -49,9 +49,10 @@ const Login = () => {
       const data = await res.json()
       if(res.status == 201){
         dispatch(loginUser(data))
-        if(data?.userDetails.role === 'Admin') {
-          router.push('/admin')
-        }else router.push('/dashboard')
+        // if(data?.userDetails.role === 'Admin') {
+        //   router.push('/admin')
+        // }else
+         router.push('/dashboard')
       }
       toast( data.msg,
           {

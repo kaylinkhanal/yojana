@@ -4,6 +4,7 @@ const { Schema } = mongoose;
 const projectSchema = new Schema({
   projectName: {type:String}, // String is shorthand for {type: String}
   projectDescription: String,
+  projectKey: String,
   members: Array,
   organization: String
 });
