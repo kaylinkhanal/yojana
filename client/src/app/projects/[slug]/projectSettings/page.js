@@ -6,7 +6,7 @@ const page = ({ params }) => {
     <>
       <AdminLayout path={params.slug}>
         <div>
-          hello world
+          I am project settings
           <p>{params.slug}</p>
         </div>
       </AdminLayout>
