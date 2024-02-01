@@ -49,7 +49,7 @@ const page = () => {
     );
   };
   return (
-    <div>
+    <header className="sticky top-0 z-20">
       <Navbar>
         <NavbarBrand>
           <Image src="/yojana-logo.png" width={110} height={110} />
@@ -111,7 +111,7 @@ const page = () => {
           )}
         </NavbarContent>
       </Navbar>
-    </div>
+    </header>
   );
 };
 
