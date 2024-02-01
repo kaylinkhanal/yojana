@@ -21,9 +21,10 @@ import { logoutUser } from "@/redux/reducerSlices/userSlice";
 import Link from "next/link";
 const loggedInConfig = {
   true: [
+    { label: "Your Work", href: "/my-work" },
     { label: "Members", href: "/members" },
     { label: "Projects", href: "/projects" },
-    { label: "Tasks", href: "/tasks" },
+    { label: "Dashboard", href: "/dashboard" },
   ],
   false: [
     { label: "About Us", href: "/about-us" },

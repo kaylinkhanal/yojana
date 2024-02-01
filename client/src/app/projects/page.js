@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import CardView from "@/components/cardView/page";
+import TableView from "@/components/tableView/page";
 import Modal from "@/components/modal/page";
 import { Button, useDisclosure } from "@nextui-org/react";
 import DynamicForm from "@/components/dynamicForm/page";
@@ -91,10 +91,21 @@ const page = () => {
               placeholder: "Enter project Description",
             },
             {
+              label: "projectLead",
+              placeholder: "Enter project Lead",
+              type: "Dropdown",
+              data: userList,
+            },
+            {
+              label: "projectType",
+              placeholder: "Enter project Type",
+            },
+            {
               label: "members",
               placeholder: "Members",
               type: "Dropdown",
               data: userList,
+              isMulti: true
             },
           ]}
         />
@@ -103,7 +114,7 @@ const page = () => {
       {/* {projectList.map((item)=>{
       return       <CardView item={item}/>
      })} */}
-      <CardView projectList={projectList} />
+      <TableView projectList={projectList} />
     </div>
   );
 };

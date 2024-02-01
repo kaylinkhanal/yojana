@@ -11,8 +11,8 @@ import {
   divider,
   Pagination,
 } from "@nextui-org/react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
+// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import {
   Dropdown,
   DropdownTrigger,
@@ -20,33 +20,9 @@ import {
   DropdownItem,
   Button,
 } from "@nextui-org/react";
+import Link from "next/link";
 
-const rows = [
-  {
-    key: "1",
-    name: "Tony Reichert",
-    role: "CEO",
-    status: "Active",
-  },
-  {
-    key: "2",
-    name: "Zoey Lang",
-    role: "Technical Lead",
-    status: "Paused",
-  },
-  {
-    key: "3",
-    name: "Jane Fisher",
-    role: "Senior Developer",
-    status: "Active",
-  },
-  {
-    key: "4",
-    name: "William Howard",
-    role: "Community Manager",
-    status: "Vacation",
-  },
-];
+
 const dropDown = [
   {
     key: "high",
@@ -73,22 +49,36 @@ const columns = [
     label: "PROJECT NAME",
   },
   {
-    key: "lead",
-    label: "ASSIGNEE",
+    key: "projectLead",
+    label: "Project Lead",
   },
   {
-    key: "members",
-    label: "MEMBERS",
+    key: "projectType",
+    label: "Project Type",
   },
   {
-    key: "status",
-    label: "STATUS",
-  },
-  {
-    key: "priority",
-    label: "PRIORITY",
+    key: "actions",
+    label: "Actions",
   },
 ];
+
+ const VerticalDotsIcon = ({size = 24, width, height, ...props}) => (
+  <svg
+    aria-hidden="true"
+    fill="none"
+    focusable="false"
+    height={size || height}
+    role="presentation"
+    viewBox="0 0 24 24"
+    width={size || width}
+    {...props}
+  >
+    <path
+      d="M12 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 12c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"
+      fill="currentColor"
+    />
+  </svg>
+);
 
 export default function App(props) {
   const [selectedKeys, setSelectedKeys] = useState([]);
@@ -103,11 +93,22 @@ export default function App(props) {
     return props.projectList.slice(start, end);
   }, [page, props.projectList]);
 
+
+  const generateDisplayName = (item, columnKey)=>{
+    let displayValue;
+    if(columnKey === 'projectLead'){
+      displayValue= item[columnKey]['fullName']
+    } else{
+      displayValue= item[columnKey]
+    }
+    
+    return displayValue
+  }
   return (
     <>
       <Table
         aria-label="Controlled table example with dynamic content"
-        selectionMode="multiple"
+        // selectionMode="multiple"
         selectedKeys={selectedKeys}
         onSelectionChange={setSelectedKeys}
         bottomContent={
@@ -133,10 +134,34 @@ export default function App(props) {
           {(item) => (
             <TableRow key={item._id}>
               {(columnKey) => {
-                let displayValue = item[columnKey];
 
-                return <TableCell>{displayValue}</TableCell>;
-              }}
+            switch (columnKey) {
+              case "projectName":
+                      return (<TableCell >
+                      <Link className="text-blue-400" href={`/projects/${item.projectKey}`}>{generateDisplayName(item, columnKey)}</Link>
+                      </TableCell>);
+              case "actions":
+                  return (
+                      <TableCell className="relative flex justify-end items-center gap-2">
+                        <Dropdown className="bg-background border-1 border-default-200">
+                          <DropdownTrigger>
+                            <Button isIconOnly radius="full" size="sm" variant="light">
+                              <VerticalDotsIcon className="text-default-400" />
+                            </Button>
+                          </DropdownTrigger>
+                          <DropdownMenu>
+                            <DropdownItem>View</DropdownItem>
+                            <DropdownItem>Edit</DropdownItem>
+                            <DropdownItem>Delete</DropdownItem>
+                          </DropdownMenu>
+                        </Dropdown>
+                      </TableCell>
+                    )
+                default:
+                  return (<TableCell>{generateDisplayName(item, columnKey)}</TableCell>)
+                            
+                          
+              }}}
             </TableRow>
           )}
         </TableBody>
@@ -144,7 +169,7 @@ export default function App(props) {
       {selectedKeys.size > 0 && (
         <div className="flex justify-end items-center">
           <button className="bg-white text-black text-5xl ">
-            <FontAwesomeIcon icon={faTrash} />{" "}
+            trash
           </button>
 
           <Dropdown>
