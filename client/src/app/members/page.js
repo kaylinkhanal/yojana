@@ -125,7 +125,7 @@ const Page = () => {
   const [userList, setUserList] = useState([]);
   const [count, setCount] = useState(0);
   const fetchUserList = async (page = 1) => {
-    const res = await fetch(`http://localhost:${process.env.NEXT_PUBLIC_API_URL}/users?page=${page}`);
+    const res = await fetch(`http://localhost:8080/users?page=${page}`);
     const data = await res.json();
     setUserList(data.userList);
     setCount(data.count);

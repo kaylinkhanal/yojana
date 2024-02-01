@@ -51,7 +51,7 @@ console.log(formik)
                   value={formik.values[item.label]}
                   variant="bordered"
                   isMultiline={true}
-                  selectionMode="multiple"
+                  selectionMode={item.isMulti ? "multiple" : "single"}
                   placeholder="Select a user"
                   labelPlacement="outside"
                   classNames={{
