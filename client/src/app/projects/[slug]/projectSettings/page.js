@@ -1,13 +1,12 @@
-'use client'
 import React from "react";
 import AdminLayout from "@/components/adminLayout/page";
 
 const page = ({ params }) => {
   return (
     <>
-      <AdminLayout>
+      <AdminLayout path={params.slug}>
         <div>
-          hello world
+          I am project settings
           <p>{params.slug}</p>
         </div>
       </AdminLayout>

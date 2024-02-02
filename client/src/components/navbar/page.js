@@ -50,7 +50,7 @@ const page = () => {
     );
   };
   return (
-    <header className="sticky top-0 z-20">
+    <header className="sticky top-0 z-20 border-b border-gray-500">
       <Navbar>
         <NavbarBrand>
           <Image src="/yojana-logo.png" width={110} height={110} />
