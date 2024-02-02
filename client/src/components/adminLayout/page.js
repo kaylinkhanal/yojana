@@ -1,10 +1,11 @@
 import React from "react";
 import Sidebar from "../sidebar/page";
 
-const page = ({ path, children }) => {
+const page = ({ children }) => {
+ 
   return (
     <>
-      <Sidebar path={path} />
+      <Sidebar />
       <div className="pl-48">
         <div className="p-4">{children}</div>
       </div>

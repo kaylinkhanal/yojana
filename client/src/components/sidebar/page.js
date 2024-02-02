@@ -5,8 +5,12 @@ import { IoIosPeople } from "react-icons/io";
 import { FaTasks } from "react-icons/fa";
 import { IoSettingsOutline } from "react-icons/io5";
 import { RxDashboard } from "react-icons/rx";
+import { useParams } from "next/navigation";
+ 
 
-const page = ({ path }) => {
+const page = () => {
+  const params = useParams()
+  const path = params.slug
   return (
     <aside className="h-screen fixed py-10 border-r border-gray-500 w-48">
       <ul className="flex flex-col items-start gap-2 border-b border-gray-500 px-2 pb-6">
