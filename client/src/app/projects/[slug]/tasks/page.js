@@ -1,11 +1,13 @@
 "use client";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import AdminLayout from "@/components/adminLayout/page";
 import { Button } from "@nextui-org/react";
+import { useEffect } from "react";
 
 const page = ({ params }) => {
+  const inputField = useRef(null)
   const [sprintList, setSprintList] = useState([]);
-  const [issueList, addIssueList] = useState([]);
+  const [issueList, setIssueList] = useState([]);
   const [activeForm, setActiveForm] = useState(null);
 
   const addSprint = () => {
@@ -20,9 +22,25 @@ const page = ({ params }) => {
     setActiveForm(index);
   };
 
-  document.body.addEventListener("click", () => handleActiveForm(null));
+  
+useEffect(()=>{
+  document.body.addEventListener("keydown", (e) =>{
+   if(e.key === 'Enter' && inputField.current.value){
+      setIssueList((prevState)=> {
+        return [...prevState,{id:prevState.length+1 , sprintKey:"Yojana" + (sprintList.length + 1), issueName: inputField.current.value}]
+      })
+   }
+  })
+},[])
+
+
+
+
+
+
   return (
     <AdminLayout>
+      {JSON.stringify(issueList)}
       <div className="flex flex-col items-end gap-5 p-5 h-full">
         <Button onClick={addSprint}>Create sprint</Button>
         <div className="w-full flex flex-col gap-10">
@@ -46,7 +64,7 @@ const page = ({ params }) => {
                 {issueList.length > 0 ? (
                   issueList.map((issueItem, issueId) => (
                     <div key={issueId} className="w-full bg-white p-2">
-                      {issueItem}
+                      {issueItem.issueName}
                     </div>
                   ))
                 ) : (
@@ -73,6 +91,7 @@ const page = ({ params }) => {
                       <option value="bug">Bug</option>
                     </select>
                     <input
+                    ref={inputField}
                       type="text"
                       placeholder="Enter issue title?"
                       className="w-full focus:outline-none"
