@@ -74,11 +74,15 @@ export default function App() {
   return (
     <div>
       <ReactSortable list={spintsList} setList={setSprintsList} {...sortableOptions}>
-        {spintsList.map((sprintItem, sprintId) => (
+        {spintsList?.map((sprintItem, sprintId) => (
             <div className="p-4 m-4 bg-red-500">
               {sprintItem.content}
               <ReactSortable  list={sprintItem.tasks} setList={(currentList)=>{
-                debugger;
+                console.log("currentList", currentList)
+                setSprintsList((currentSprintList)=>{
+                  console.log("currentSprintList",currentSprintList)
+                  return currentSprintList
+                })
               }} >
               {sprintItem.tasks.map((taskItem, taskId)=>{
                 return <div className="p-4 m-2 bg-blue-600">{taskItem.content}</div>
