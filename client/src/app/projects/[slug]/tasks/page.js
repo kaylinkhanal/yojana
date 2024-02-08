@@ -24,7 +24,6 @@ const sprintStr =  {
 }
 
 export default function App() {
-  const orgStr = {...sprintStr}
   const inputRef = useRef(null)
   const [activeForm, setActiveForm ]= useState(null)
   const [spintsList, setSprintsList] = useState([
@@ -45,25 +44,35 @@ export default function App() {
       ]
     })
     setSprintsList(existingSpintsList)
+
   }
 
 
-  useEffect(() => {
+  // useEffect(() => {
+  //   debugger;
     document.body.addEventListener("keydown", (e) => {
       if (e.key === "Enter" && inputRef.current.value) {
-        const tempSpintsList = [...spintsList]
-        tempSpintsList[0].tasks.push({
-          content: inputRef.current.value,
-          id:  tempSpintsList[0].tasks.length+1
-        })
-        setSprintsList(tempSpintsList)
+        const currentSprint = parseInt(inputRef.current.id.split('*')[0])
+        const tempSpintsList = JSON.parse(inputRef.current.id.split('*')[1]).spintsList
+
+        debugger;
+        if(tempSpintsList[currentSprint]?.tasks[tempSpintsList[currentSprint].tasks.length - 1]?.content !== inputRef.current.value){
+          tempSpintsList[currentSprint].tasks.push({
+            content: inputRef.current.value,
+            id:  tempSpintsList[currentSprint].tasks.length+1
+          })
+          setSprintsList(tempSpintsList)
+        }
       }
     });
-  }, []);
+
+  // }, []);
   return (
     <AdminLayout>
        <div className="flex flex-col items-end gap-4">
         <Button onClick={addSprint}>Create Sprint</Button>
+
+      {JSON.stringify(spintsList)}
       <ReactSortable 
          className="w-full"
       list={spintsList} setList={setSprintsList} {...sortableOptions}>
@@ -86,7 +95,7 @@ export default function App() {
               {sprintItem?.tasks.length>0 ? sprintItem.tasks.map((taskItem, taskId)=>{
                 return <div
                 key={taskItem.id}
-                className="p-4 m-2 bg-white">{taskItem.content}
+                className="p-4 m-2 bg-white"> 
               {taskItem.content}</div>
               }): (
                 <div className="w-full py-2 text-center border border-gray-500 border-dashed">
@@ -113,6 +122,8 @@ export default function App() {
                   </select>
                   <input
                     ref={inputRef}
+                    id={[ sprintId, '*'+JSON.stringify({spintsList})]}
+                    mapping= "test"
                     type="text"
                     placeholder="Enter issue title?"
                     className="w-full focus:outline-none"
@@ -120,7 +131,6 @@ export default function App() {
                 </div>
               </div>
               </ReactSortable>
-              
               </div>
         ))}
       </ReactSortable>
