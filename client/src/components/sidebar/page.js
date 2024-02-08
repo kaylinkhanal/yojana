@@ -6,6 +6,7 @@ import { FaTasks } from "react-icons/fa";
 import { IoSettingsOutline } from "react-icons/io5";
 import { RxDashboard } from "react-icons/rx";
 import { useParams } from "next/navigation";
+import { FiGitPullRequest } from "react-icons/fi";
  
 
 const page = () => {
@@ -39,6 +40,15 @@ const page = () => {
           >
             <IoIosPeople />
             Members
+          </Link>
+        </li>
+        <li className="font-medium w-full">
+          <Link
+            href={`/projects/${path}/pullRequest`}
+            className="flex items-center gap-2 w-full hover:bg-blue-950 hover:bg-opacity-10 p-2"
+          >
+            <FiGitPullRequest />
+            Pull Request
           </Link>
         </li>
       </ul>
