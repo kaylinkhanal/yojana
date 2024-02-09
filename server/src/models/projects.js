@@ -10,7 +10,12 @@ const projectSchema = new Schema({
     ref: "User"
   },
   projectType: String,
-  members: Array,
+  members: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User"
+    }
+  ],
   organization: String
 });
 

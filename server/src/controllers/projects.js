@@ -10,7 +10,12 @@ const getProjects= async(req,res)=> {
   const projectList=  await Project.find().populate("projectLead")
  return res.json({projectList})
  }
+ const getAllMembersByProjectId= async(req,res)=> {
+  const projectList=  await Project.findById(req.params.projectId).select('members').populate('members')
+ return res.json({projectList})
+ }
+ 
  
 
-module.exports = {addNewProjects,getProjects}
+module.exports = {addNewProjects,getProjects,getAllMembersByProjectId}
 
