@@ -3,6 +3,8 @@ import React, { useState, useRef, useEffect } from "react";
 import { ReactSortable } from "react-sortablejs";
 import AdminLayout from "@/components/adminLayout/page";
 import { Button } from "@nextui-org/react";
+import axios from "axios";
+import { useSelector } from 'react-redux'
 
 const sortableOptions = {
   animation: 150,
@@ -13,38 +15,26 @@ const sortableOptions = {
   forceFallback: true
 };
 
-const sprintStr =  {
-  id: 1,
-  content: "Yojana",
-  parent_id: null,
-  type: "container",
-  tasks: [
-   
-  ]
-}
 
 export default function App() {
+  const {selectedProjectId} = useSelector(state=>state.project)
   const inputRef = useRef(null)
   const [activeForm, setActiveForm ]= useState(null)
-  const [spintsList, setSprintsList] = useState([
-    sprintStr
-  ]);
+  const [spintsList, setSprintsList] = useState([]);
   const handleActiveForm = (index) => {
     setActiveForm(index);
   };
-  const addSprint =()=>{
+  const addSprint = async()=>{
     const existingSpintsList  = [...spintsList]
-    existingSpintsList.push({
-      id: 1,
-      content: "Yojana",
-      parent_id: null,
-      type: "container",
+    const tempSprint = {
+      sprintName: "Yojana-" + (existingSpintsList.length+1) ,
       tasks: [
-
-      ]
-    })
+      ],
+      projectId: selectedProjectId
+    }
+    existingSpintsList.push(tempSprint)
     setSprintsList(existingSpintsList)
-
+    await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/sprints`,tempSprint)
   }
 
 
@@ -55,13 +45,13 @@ export default function App() {
         const currentSprint = parseInt(inputRef.current.id.split('*')[0])
         const tempSpintsList = JSON.parse(inputRef.current.id.split('*')[1]).spintsList
 
-        debugger;
-        if(tempSpintsList[currentSprint]?.tasks[tempSpintsList[currentSprint].tasks.length - 1]?.content !== inputRef.current.value){
+        if(tempSpintsList[currentSprint]?.tasks[tempSpintsList[currentSprint].tasks.length - 1]?.sprintName !== inputRef.current.value){
           tempSpintsList[currentSprint].tasks.push({
-            content: inputRef.current.value,
+            sprintName: inputRef.current.value,
             id:  tempSpintsList[currentSprint].tasks.length+1
           })
           setSprintsList(tempSpintsList)
+          inputRef.current.value = ""
         }
       }
     });
@@ -80,7 +70,7 @@ export default function App() {
               <div
               key={sprintItem.id}
               className="p-4 m-4 bg-gray-200 flex flex-col items-start gap-1">
-              {sprintItem.content} {sprintId}
+              {sprintItem.sprintName}
               <ReactSortable  
                  className="w-full"
               list={sprintItem.tasks} setList={(currentList)=>{
@@ -96,7 +86,7 @@ export default function App() {
                 return <div
                 key={taskItem.id}
                 className="p-4 m-2 bg-white"> 
-              {taskItem.content}</div>
+              {taskItem.sprintName}</div>
               }): (
                 <div className="w-full py-2 text-center border border-gray-500 border-dashed">
                 <p>

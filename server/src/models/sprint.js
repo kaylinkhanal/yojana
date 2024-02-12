@@ -4,11 +4,11 @@ const { Schema } = mongoose;
 const sprintSchema = new Schema({
   sprintName: String,
   isStarted:{ type: Boolean, default: false},
-  startDate: Date,
-  tasks: [{
+  projectId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Task"
-  }],
+    ref: "Project"
+  },
+  startDate: Date,
   endDate: Date
 },{
   timestamps:true
