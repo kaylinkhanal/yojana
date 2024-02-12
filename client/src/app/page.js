@@ -7,6 +7,7 @@ import Link from "next/link";
 export default function App() {
   return (
     <>
+    <Navbar/>
       <section className="text-gray-600 body-font bg-gray-950">
         <div className="container py-24 flex items-center gap-10">
           <div className="flex flex-col items-start mb-20 w-1/2 gap-4">

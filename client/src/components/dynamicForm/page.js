@@ -14,7 +14,7 @@ const DynamicForm = (props) => {
   const router = useRouter()
   const dispatch = useDispatch()
   const formik = useFormik({
-    initialValues: {
+    initialValues: props.initialValues || {
     },
     onSubmit: values => {
       handleSave(values);
@@ -51,7 +51,7 @@ console.log(formik)
                   value={formik.values[item.label]}
                   variant="bordered"
                   isMultiline={true}
-                  selectionMode="multiple"
+                  selectionMode={item.isMulti ? "multiple" : "single"}
                   placeholder="Select a user"
                   labelPlacement="outside"
                   classNames={{

@@ -5,7 +5,17 @@ const projectSchema = new Schema({
   projectName: {type:String}, // String is shorthand for {type: String}
   projectDescription: String,
   projectKey: String,
-  members: Array,
+  projectLead: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User"
+  },
+  projectType: String,
+  members: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User"
+    }
+  ],
   organization: String
 });
 

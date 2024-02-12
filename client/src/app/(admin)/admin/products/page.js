@@ -24,7 +24,7 @@ const SignupSchema = Yup.object().shape({
 });
 
 
-const Login = () => {
+const Products = () => {
   const router = useRouter()
   const dispatch = useDispatch()
   const formik = useFormik({
@@ -41,7 +41,7 @@ const Login = () => {
   });
   const handleLogin = async(inputFields)=>{
     try{
-      const res = await fetch('http://localhost:8080/login/',{
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/login`,{
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(inputFields)
@@ -49,10 +49,9 @@ const Login = () => {
       const data = await res.json()
       if(res.status == 201){
         dispatch(loginUser(data))
-        // if(data?.userDetails.role === 'Admin') {
-        //   router.push('/admin')
-        // }else
-         router.push('/dashboard')
+        if(data?.userDetails.role === 'Admin') {
+          router.push('/admin')
+        }else router.push('/dashboard')
       }
       toast( data.msg,
           {
@@ -71,12 +70,40 @@ const Login = () => {
   }
   return(
   <FormSection>
-    <h1>Login</h1>
+    <h1>Add Products</h1>
         <form onSubmit={formik.handleSubmit}>
         
         <Input
-        id="email"
-          label="Email"
+        id="productName"
+          label="productName"
+          name="email"
+          onChange={ formik.handleChange}
+          value={formik.values.email}
+          placeholder="Enter Email"
+          labelPlacement="outside"
+        />
+          <Input
+        id="productDescription"
+          label="productDescription"
+          name="productDescription"
+          onChange={ formik.handleChange}
+          value={formik.values.email}
+          placeholder="Enter Email"
+          labelPlacement="outside"
+        />
+          <Input
+        id="productPrice"
+          label="productPrice"
+          name="productPrice"
+          onChange={ formik.handleChange}
+          value={formik.values.email}
+          placeholder="Enter Email"
+          labelPlacement="outside"
+        />
+        
+          <Input
+        id="productName"
+          label="productName"
           name="email"
           onChange={ formik.handleChange}
           value={formik.values.email}
@@ -103,6 +130,6 @@ const Login = () => {
   </FormSection>
 )}
 
-export default Login
+export default Products
 
 

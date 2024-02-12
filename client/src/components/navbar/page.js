@@ -21,9 +21,10 @@ import { logoutUser } from "@/redux/reducerSlices/userSlice";
 import Link from "next/link";
 const loggedInConfig = {
   true: [
+    { label: "Your Work", href: "/my-work" },
     { label: "Members", href: "/members" },
     { label: "Projects", href: "/projects" },
-    { label: "Tasks", href: "/tasks" },
+    { label: "Dashboard", href: "/dashboard" },
   ],
   false: [
     { label: "About Us", href: "/about-us" },
@@ -49,7 +50,7 @@ const page = () => {
     );
   };
   return (
-    <header className="sticky top-0 z-20">
+    <header className="sticky top-0 z-20 border-b border-gray-500">
       <Navbar>
         <NavbarBrand>
           <Image src="/yojana-logo.png" width={110} height={110} />

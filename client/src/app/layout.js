@@ -15,7 +15,7 @@ export default function RootLayout({ children }) {
       <body className={inter.className}>
         <ReduxProvider>
           <NextUIProvider>
-            <NavBar/>
+            {/* <NavBar/> */}
             {children}
           </NextUIProvider>
         </ReduxProvider>
