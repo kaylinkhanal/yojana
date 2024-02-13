@@ -14,7 +14,7 @@ const DynamicForm = (props) => {
   const router = useRouter()
   const dispatch = useDispatch()
   const formik = useFormik({
-    initialValues: {
+    initialValues: props.initialValues || {
     },
     onSubmit: values => {
       handleSave(values);

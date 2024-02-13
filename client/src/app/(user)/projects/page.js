@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import TableView from "@/components/tableView/page";
 import Modal from "@/components/modal/page";
-import { Button, useDisclosure } from "@nextui-org/react";
+import { Button, select, useDisclosure } from "@nextui-org/react";
 import DynamicForm from "@/components/dynamicForm/page";
 import { useSelector } from "react-redux";
 import axios from "axios";
@@ -13,15 +13,21 @@ const page = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [projectList, setProjectList] = useState([]);
   const [userList, setUserList] = useState([]);
-
+  const [selectedProject, setSelectedProject] = useState({})
   const fetchProjectList = async () => {
-    const res = await fetch(`http://localhost:8080/projects`);
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/projects`);
     const data = await res.json();
     setProjectList(data.projectList);
   };
 
+
+  const deleteProject = async (id) => {
+    const res = await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/projects/${id}`);
+    if(res) fetchProjectList()
+  };
+
   const fetchUserList = async () => {
-    const res = await fetch(`http://localhost:8080/users`);
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users`);
     const data = await res.json();
     setUserList(data.userList);
   };
@@ -41,6 +47,13 @@ const page = () => {
     onOpenChange();
     fetchProjectList();
   };
+
+
+  const editProject = (id)=>{
+    onOpenChange();
+    const projectDetails = projectList.find(item=> item._id == id)
+    setSelectedProject(projectDetails)
+  }
 
   const generateKey = (inputProject, event) => {
     if (event?.target.name === "projectName") {
@@ -84,6 +97,7 @@ const page = () => {
           onSave={onSave}
           projectKey={projectKey}
           generateKey={generateKey}
+          initialValues={selectedProject}
           formFields={[
             { label: "projectName", placeholder: "Enter project Name" },
             {
@@ -114,7 +128,9 @@ const page = () => {
       {/* {projectList.map((item)=>{
       return       <CardView item={item}/>
      })} */}
-      <TableView projectList={projectList} />
+      <TableView
+      editProject={editProject}
+      deleteProject={deleteProject} projectList={projectList} />
     </div>
   );
 };
