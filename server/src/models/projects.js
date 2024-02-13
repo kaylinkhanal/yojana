@@ -5,6 +5,11 @@ const projectSchema = new Schema({
   projectName: {type:String}, // String is shorthand for {type: String}
   projectDescription: String,
   projectKey: String,
+  projectLead: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User"
+  },
+  projectType: String,
   members: Array,
   organization: String
 });
