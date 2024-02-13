@@ -20,7 +20,7 @@ const page = () => {
 
   const [userList, setUserList] = useState([]);
   const fetchUserList = async () => {
-    const res = await fetch(`http://localhost:${process.env.NEXT_PUBLIC_API_URL}/users`);
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users`);
     const data = await res.json();
     setUserList(data.userList);
   };

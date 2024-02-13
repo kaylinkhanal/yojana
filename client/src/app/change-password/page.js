@@ -33,7 +33,7 @@ const page = () => {
 
     const handlePasswordChanges = async (inputChanges) => {
         try {
-            const res = await axios.post(`http://localhost:${process.env.NEXT_PUBLIC_API_URL}/change-password`, inputChanges)
+            const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/change-password`, inputChanges)
             const data = await res.data
 
             toast(data.check ? `${data.msg}, please login! `: data.msg,

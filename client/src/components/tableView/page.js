@@ -11,6 +11,8 @@ import {
   divider,
   Pagination,
 } from "@nextui-org/react";
+import {setSelectedProjectId} from '@/redux/reducerSlices/projectSlice'
+import { useDispatch } from "react-redux"
 // import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 // import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import {
@@ -81,6 +83,7 @@ const columns = [
 );
 
 export default function App(props) {
+  const dispatch = useDispatch()
   const [selectedKeys, setSelectedKeys] = useState([]);
   console.log(selectedKeys);
   const [page, setPage] = useState(1);
@@ -138,7 +141,7 @@ export default function App(props) {
             switch (columnKey) {
               case "projectName":
                       return (<TableCell >
-                      <Link className="text-blue-400" href={`/projects/${item.projectKey}`}>{generateDisplayName(item, columnKey)}</Link>
+                      <Link className="text-blue-400" onClick={()=>dispatch(setSelectedProjectId(item._id))} href={`/projects/${item.projectKey}`}>{generateDisplayName(item, columnKey)}</Link>
                       </TableCell>);
               case "actions":
                   return (
@@ -151,8 +154,8 @@ export default function App(props) {
                           </DropdownTrigger>
                           <DropdownMenu>
                             <DropdownItem>View</DropdownItem>
-                            <DropdownItem>Edit</DropdownItem>
-                            <DropdownItem>Delete</DropdownItem>
+                            <DropdownItem onClick={()=>props.editProject(item._id)}>Edit</DropdownItem>
+                            <DropdownItem onClick={()=>props.deleteProject(item._id)}>Delete</DropdownItem>
                           </DropdownMenu>
                         </Dropdown>
                       </TableCell>
