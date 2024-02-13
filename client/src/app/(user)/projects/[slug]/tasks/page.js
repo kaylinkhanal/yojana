@@ -37,6 +37,14 @@ export default function App() {
     await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/sprints`,tempSprint)
   }
 
+  const fetchSprintList =async()=>{
+   const {data}= await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/sprints/${selectedProjectId}`)
+   setSprintsList(data.sprintList)
+  }
+
+  useEffect(()=>{
+fetchSprintList()
+  },[])
 
   // useEffect(() => {
   //   debugger;
@@ -66,7 +74,8 @@ export default function App() {
       <ReactSortable 
          className="w-full"
       list={spintsList} setList={setSprintsList} {...sortableOptions}>
-        {spintsList?.map((sprintItem, sprintId) => (
+        {spintsList?.map((sprintItem, sprintId) => {
+          return(
               <div
               key={sprintItem.id}
               className="p-4 m-4 bg-gray-200 flex flex-col items-start gap-1">
@@ -110,11 +119,10 @@ export default function App() {
                     <option value="feature">Feature</option>
                     <option value="bug">Bug</option>
                   </select>
+                 
                   <input
                     ref={inputRef}
                     id={[ sprintId, '*'+JSON.stringify({spintsList})]}
-                    mapping= "test"
-                    type="text"
                     placeholder="Enter issue title?"
                     className="w-full focus:outline-none"
                   />
@@ -122,7 +130,7 @@ export default function App() {
               </div>
               </ReactSortable>
               </div>
-        ))}
+        )})}
       </ReactSortable>
       </div>
     </AdminLayout>

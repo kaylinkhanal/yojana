@@ -59,7 +59,7 @@ const page = () => {
     if (event?.target.name === "projectName") {
       if (!inputProject) return "";
       let finalKey =
-        userDetails.organization.charAt(0).toUpperCase() +
+        userDetails?.organization.charAt(0).toUpperCase() +
         inputProject
           ?.split(" ")
           ?.map((item) => item[0])

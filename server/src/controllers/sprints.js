@@ -5,7 +5,15 @@ const addNewSprints = async(req,res)=> {
  res.json({msg: 'Sprint created successfully'})
 }
 
-module.exports = {addNewSprints}
+
+const getAllSpirntsByProjectId = async(req,res)=> {
+  const sprintList = await Sprint.find({projectId: req.params.projectId}).select('sprintName projectId').lean()
+  const refactoredList = sprintList.map((item)=>{
+     return {...item, tasks: [] }
+    })
+  res.json({sprintList:refactoredList})
+   }
+module.exports = {addNewSprints,getAllSpirntsByProjectId}
 
 
 
