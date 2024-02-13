@@ -13,17 +13,18 @@ const page = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [projectList, setProjectList] = useState([]);
   const [userList, setUserList] = useState([]);
-  const [selectedProject, setSelectedProject] = useState({})
+  const [selectedProject, setSelectedProject] = useState({});
   const fetchProjectList = async () => {
     const res = await fetch(`http://localhost:8080/projects`);
     const data = await res.json();
     setProjectList(data.projectList);
   };
 
-
   const deleteProject = async (id) => {
-    const res = await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/projects/${id}`);
-    if(res) fetchProjectList()
+    const res = await axios.delete(
+      `${process.env.NEXT_PUBLIC_API_URL}/projects/${id}`
+    );
+    if (res) fetchProjectList();
   };
 
   const fetchUserList = async () => {
@@ -48,12 +49,11 @@ const page = () => {
     fetchProjectList();
   };
 
-
-  const editProject = (id)=>{
+  const editProject = (id) => {
     onOpenChange();
-    const projectDetails = projectList.find(item=> item._id == id)
-    setSelectedProject(projectDetails)
-  }
+    const projectDetails = projectList.find((item) => item._id == id);
+    setSelectedProject(projectDetails);
+  };
 
   const generateKey = (inputProject, event) => {
     if (event?.target.name === "projectName") {
@@ -119,7 +119,7 @@ const page = () => {
               placeholder: "Members",
               type: "Dropdown",
               data: userList,
-              isMulti: true
+              isMulti: true,
             },
           ]}
         />
@@ -129,8 +129,10 @@ const page = () => {
       return       <CardView item={item}/>
      })} */}
       <TableView
-      editProject={editProject}
-      deleteProject={deleteProject} projectList={projectList} />
+        editProject={editProject}
+        deleteProject={deleteProject}
+        projectList={projectList}
+      />
     </div>
   );
 };
