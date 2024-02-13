@@ -1,34 +1,36 @@
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 const { Schema } = mongoose;
 // define shape of the User documents in the collection
-const taskSchema = new Schema({
-  project: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Project"
-  },
-  issueType: {
-    type: String,
-    enum : ['Feature', 'Bug'],
-    default: 'Feature'
+const taskSchema = new Schema(
+  {
+    project: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Project",
+    },
+    issueType: {
+      type: String,
+      enum: ["Feature", "Bug"],
+      default: "Feature",
     },
     summary: String,
     description: String,
     assignee: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User"
+      ref: "User",
     },
-    sprint:  {
+    sprint: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Sprint"
+      ref: "Sprint",
     },
-    reporter:  {
+    reporter: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User"
+      ref: "User",
     },
-},{
-  timestamps:true
-});
+  },
+  {
+    timestamps: true,
+  }
+);
 
-
-const Task = mongoose.model('Task', taskSchema);
-module.exports = Task
+const Task = mongoose.model("Task", taskSchema);
+module.exports = Task;
