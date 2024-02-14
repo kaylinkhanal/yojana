@@ -6,7 +6,7 @@ import AdminLayout from "@/components/adminLayout/page";
 import axios from "axios";
 import { useSelector } from 'react-redux'
 import Modal from "@/components/modal/page";
-import { Listbox, ListboxItem } from "@nextui-org/react";
+import { Listbox, ListboxItem, input } from "@nextui-org/react";
 import { FaXmark } from "react-icons/fa6";
 import { Button, Chip, Select,useDisclosure, SelectItem } from "@nextui-org/react";
 
@@ -22,7 +22,7 @@ const sortableOptions = {
 
 export default function App() {
   const { selectedProjectId } = useSelector(state => state.project)
-  const inputRef = useRef(null)
+  const inputRef = useRef([])
   const [activeForm, setActiveForm] = useState(null)
   const [sprintsList, setSprintsList] = useState([]);
   const handleActiveForm = (index) => {
@@ -45,37 +45,38 @@ export default function App() {
   const fetchSprintList = async () => {
     const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/sprints/${selectedProjectId}`)
      setSprintsList(data.sprintList)
-   
   }
 
   useEffect(() => {
     fetchSprintList()
   }, [])
 
-    const createTasks = async() => {
-      debugger;
-       const currentSprint = parseInt(inputRef.current.id.split('*')[0])
-       const tempSprintsList = JSON.parse(inputRef.current.id.split('*')[1]).sprintsList
-       await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/tasks`, {summary: inputRef.current.value, sprint: tempSprintsList[currentSprint]._id })
+    const createTasks = async(currentSprint) => {
+       await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/tasks`, {summary: inputRef.current.value, sprint: sprintsList[currentSprint]._id })
     }
   
   useEffect(() => {
-  document.body.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" && inputRef.current.value) {
-      const currentSprint = parseInt(inputRef.current.id.split('*')[0])
-      const tempSprintsList = JSON.parse(inputRef.current.id.split('*')[1]).sprintsList
-      if (tempSprintsList[currentSprint]?.tasks[tempSprintsList[currentSprint].tasks.length - 1]?.sprintName !== inputRef.current.value) {
-        createTasks()
-        tempSprintsList[currentSprint].tasks.push({
-          sprintName: inputRef.current.value,
-          id: tempSprintsList[currentSprint].tasks.length + 1
-        })
-        setSprintsList(tempSprintsList)
-        inputRef.current.value = ""
-      }
-    }
-  });
-},[])
+    const handleKeyPress = (e) => {
+      if (e.key === "Enter") {
+        const currentSprint = e.target.getAttribute('data-arrayId');
+        const tempSprintsList = [...sprintsList]
+        // if (tempSprintsList[currentSprint]?.tasks[tempSprintsList[currentSprint].tasks.length - 1]?.sprintName !== e.target.value) {
+          createTasks(currentSprint);
+          tempSprintsList[currentSprint].tasks.push({
+            sprintName: e.target.value,
+            id: tempSprintsList[currentSprint].tasks.length + 1
+          });
+          setSprintsList(tempSprintsList);
+          e.target.value = "";
+        }
+      // }
+    };
+  
+    document.body.addEventListener("keydown", handleKeyPress);
+    return () => {
+      document.body.removeEventListener("keydown", handleKeyPress);
+    };
+},[inputRef, createTasks, setSprintsList])
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
@@ -86,7 +87,6 @@ export default function App() {
       <div className="flex flex-col items-end gap-4">
         <Button onClick={addSprint}>Create Sprint</Button>
 
-        {JSON.stringify(sprintsList)}
         <ReactSortable
           className="w-full"
           list={sprintsList} setList={setSprintsList} {...sortableOptions}>
@@ -142,8 +142,8 @@ export default function App() {
                       </select>
 
                       <input
-                        ref={inputRef}
-                        id={[sprintId, '*' + JSON.stringify({ sprintsList })]}
+                         data-arrayId={sprintId} 
+                        ref={el => inputRef.current[sprintId] = el}
                         placeholder="Enter issue title?"
                         className="w-full focus:outline-none"
                       />
