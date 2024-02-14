@@ -19,6 +19,7 @@ import {
 } from "@nextui-org/react";
 import { logoutUser } from "@/redux/reducerSlices/userSlice";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 const loggedInConfig = {
   true: [
     { label: "Your Work", href: "/my-work" },
@@ -33,6 +34,7 @@ const loggedInConfig = {
 };
 
 const page = () => {
+  const router = useRouter();
   const dispatch = useDispatch();
   const { isLoggedIn, userDetails } = useSelector((state) => state.user);
   const AuthButtons = () => {
@@ -84,7 +86,7 @@ const page = () => {
                     <p className="font-semibold">{userDetails.email}</p>
                   </DropdownItem>
                   <DropdownItem key="settings">
-                    <Link color="foreground" href="/profile" >
+                    <Link color="foreground" href="/profile">
                       Profile
                     </Link>
                   </DropdownItem>
@@ -100,7 +102,10 @@ const page = () => {
                   <DropdownItem
                     key="logout"
                     color="danger"
-                    onClick={() => dispatch(logoutUser())}
+                    onClick={() => {
+                      router.push("/");
+                      dispatch(logoutUser());
+                    }}
                   >
                     Log Out
                   </DropdownItem>
