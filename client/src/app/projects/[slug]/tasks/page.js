@@ -2,11 +2,14 @@
 import React, { useState, useRef, useEffect } from "react";
 import { ReactSortable } from "react-sortablejs";
 import AdminLayout from "@/components/adminLayout/page";
-import { Button, useDisclosure } from "@nextui-org/react";
+
 import axios from "axios";
 import { useSelector } from 'react-redux'
 import Modal from "@/components/modal/page";
 import { Listbox, ListboxItem } from "@nextui-org/react";
+import { FaXmark } from "react-icons/fa6";
+import { Button, Chip, Select,useDisclosure, SelectItem } from "@nextui-org/react";
+
 const sortableOptions = {
   animation: 150,
   fallbackOnBody: true,
@@ -36,26 +39,33 @@ export default function App() {
     existingSprintsList.push(tempSprint)
     setSprintsList(existingSprintsList)
     await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/sprints`, tempSprint)
+    fetchSprintList()
   }
 
   const fetchSprintList = async () => {
     const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/sprints/${selectedProjectId}`)
-    //  setSprintsList(data.sprintList)
-    alert(JSON.stringify(data))
+     setSprintsList(data.sprintList)
+   
   }
 
   useEffect(() => {
     fetchSprintList()
   }, [])
 
-  // useEffect(() => {
-  //   debugger;
+    const createTasks = async() => {
+      debugger;
+       const currentSprint = parseInt(inputRef.current.id.split('*')[0])
+       const tempSprintsList = JSON.parse(inputRef.current.id.split('*')[1]).sprintsList
+       await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/tasks`, {summary: inputRef.current.value, sprint: tempSprintsList[currentSprint]._id })
+    }
+  
+  useEffect(() => {
   document.body.addEventListener("keydown", (e) => {
     if (e.key === "Enter" && inputRef.current.value) {
       const currentSprint = parseInt(inputRef.current.id.split('*')[0])
       const tempSprintsList = JSON.parse(inputRef.current.id.split('*')[1]).sprintsList
-
       if (tempSprintsList[currentSprint]?.tasks[tempSprintsList[currentSprint].tasks.length - 1]?.sprintName !== inputRef.current.value) {
+        createTasks()
         tempSprintsList[currentSprint].tasks.push({
           sprintName: inputRef.current.value,
           id: tempSprintsList[currentSprint].tasks.length + 1
@@ -65,7 +75,7 @@ export default function App() {
       }
     }
   });
-
+},[])
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
@@ -106,21 +116,6 @@ export default function App() {
                         {taskItem.sprintName}
                       </div>
 
-                      <Modal
-                        title={taskItem.sprintName}
-                        isOpen={isOpen}
-                        onOpen={onOpen}
-                        onOpenChange={onOpenChange}
-                      >
-                        <Listbox
-                          aria-label="Listbox Variants"
-                        >
-                          <ListboxItem>Summary</ListboxItem>
-                          <ListboxItem>Description</ListboxItem>
-                          <ListboxItem>Assignee</ListboxItem>
-                          <ListboxItem>Reporter</ListboxItem>
-                        </Listbox>
-                      </Modal>
                     </div>
 
                   )) : (
@@ -160,6 +155,103 @@ export default function App() {
           })}
         </ReactSortable>
       </div>
+
+      <Modal
+                        title={'test'}
+                        isOpen={isOpen}
+                        onOpen={onOpen}
+                        onOpenChange={onOpenChange}
+                      >
+                      
+                       
+                       <div>
+  
+      <div className="w-full flex flex-col items-start gap-3">
+
+        <div className="flex flex-col items-start gap-1 w-full">
+          <label htmlFor="">Summary</label>
+          <textarea
+            name=""
+            id=""
+            rows="4"
+            className="w-full border border-gray-500 focus:outline-none p-2"
+          ></textarea>
+        </div>
+        <div className="flex flex-col items-start gap-1 w-full">
+          <label htmlFor="">Description</label>
+          <textarea
+            name=""
+            id=""
+            rows="4"
+            className="w-full border border-gray-500 focus:outline-none p-2"
+          ></textarea>
+        </div>
+        <div className="w-full h-full border border-gray-400">
+          <h3 className="border-b border-gray-400 px-3 py-2">
+            Project Details
+          </h3>
+          <div className="p-3 flex flex-col items-start gap-2">
+            <div className="w-full flex items-center justify-between gap-4">
+              <p className="w-1/2 font-medium">Assignee</p>
+              <div className="w-1/2">
+                {/* <Select
+                  items={projectMembers}
+                  variant="bordered"
+                  isMultiline={true}
+                  selectionMode="multiple"
+                  placeholder="Assigne"
+                  labelPlacement="outside"
+                  classNames={{
+                    base: "max-w-xs",
+                    trigger: "min-h-unit-12 py-2",
+                  }}
+                  renderValue={(items) => {
+                    return (
+                      <div className="flex flex-wrap gap-2">
+                        {items.map((item) => (
+                          <Chip key={item.key}>{item.data.fullName}</Chip>
+                        ))}
+                      </div>
+                    );
+                  }}
+                >
+                  {(user) => (
+                    <SelectItem key={user._id} textValue={user.fullName}>
+                      <div className="flex gap-2 items-center">
+                        <div className="flex flex-col">
+                          <span className="text-small">{user.fullName}</span>
+                          <span className="text-tiny text-default-400">
+                            {user.email}
+                          </span>
+                        </div>
+                      </div>
+                    </SelectItem>
+                  )}
+                </Select> */}
+              </div>
+            </div>
+            <div className="w-full flex items-center justify-between gap-4">
+              <p className="w-1/2 font-medium">Sprint</p>
+              <p className="w-1/2 text-lg">test</p>
+            </div>
+            <div className="w-full flex items-center justify-between gap-4">
+              <p className="w-1/2 font-medium">Issue Type</p>
+              <div className="w-1/2">
+                <select name="" id="" className="focus:outline-none">
+                  <option value="feature">Feature</option>
+                  <option value="bug">Bug</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button className="bg-blue-700 text-white py-1 px-2">
+          Save Changes
+        </button>
+      </div>
+    </div>
+               
+                      </Modal>
     </AdminLayout>
   );
 }

@@ -2,8 +2,8 @@ const Sprint = require('../models/sprint')
 
 const addNewSprints = async (req, res) => {
     try {
-        await Sprint.create(req.body)
-        res.json({ msg: 'Sprint created successfully' })
+       const data = await Sprint.create(req.body)
+        res.json({ msg: 'Sprint created successfully'})
     } catch (err) {
         console.log(err)
     }
