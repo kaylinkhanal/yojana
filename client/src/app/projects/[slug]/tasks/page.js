@@ -22,8 +22,8 @@ const sortableOptions = {
 
 export default function App() {
   const { selectedProjectId } = useSelector(state => state.project)
-  const inputRef = useRef(null)
-  const [activeForm, setActiveForm] = useState(null)
+  const inputRef = useRef([])
+  const [activeForm, setActiveForm] = useState(1)
   const [sprintsList, setSprintsList] = useState([]);
   const handleActiveForm = (index) => {
     setActiveForm(index);
@@ -50,32 +50,35 @@ export default function App() {
 
   useEffect(() => {
     fetchSprintList()
+    
   }, [])
 
-    const createTasks = async() => {
-      debugger;
-       const currentSprint = parseInt(inputRef.current.id.split('*')[0])
-       const tempSprintsList = JSON.parse(inputRef.current.id.split('*')[1]).sprintsList
-       await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/tasks`, {summary: inputRef.current.value, sprint: tempSprintsList[currentSprint]._id })
+    const createTasks = async(inputId,sprintName) => {
+       await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/tasks`, {summary: sprintName, sprint: inputId })
     }
   
+
+
   useEffect(() => {
-  document.body.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" && inputRef.current.value) {
-      const currentSprint = parseInt(inputRef.current.id.split('*')[0])
-      const tempSprintsList = JSON.parse(inputRef.current.id.split('*')[1]).sprintsList
-      if (tempSprintsList[currentSprint]?.tasks[tempSprintsList[currentSprint].tasks.length - 1]?.sprintName !== inputRef.current.value) {
-        createTasks()
-        tempSprintsList[currentSprint].tasks.push({
-          sprintName: inputRef.current.value,
-          id: tempSprintsList[currentSprint].tasks.length + 1
-        })
-        setSprintsList(tempSprintsList)
-        inputRef.current.value = ""
-      }
+const handleChange= (e)=>{
+  const inputId =e.target.getAttribute('data-arrayId')
+  const sprintName = inputRef.current[inputId].value
+    if (e.key === "Enter" && inputRef.current[inputId]) {
+      const tempSprintsList = [...sprintsList]
+        tempSprintsList[inputId].tasks.push({
+          sprintName: sprintName,
+          id: inputId
+      })
+      setSprintsList(tempSprintsList)
     }
-  });
-},[])
+}
+
+document.body.addEventListener("keydown", handleChange)
+//return can have a clean up functions
+return () => {
+  document.body.removeEventListener("keydown", handleChange);
+};
+},[inputRef, createTasks, setSprintsList])
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
@@ -142,8 +145,8 @@ export default function App() {
                       </select>
 
                       <input
-                        ref={inputRef}
-                        id={[sprintId, '*' + JSON.stringify({ sprintsList })]}
+                        data-arrayId={sprintId}
+                        ref={(element)=>inputRef.current[sprintId]= element }
                         placeholder="Enter issue title?"
                         className="w-full focus:outline-none"
                       />
@@ -255,3 +258,5 @@ export default function App() {
     </AdminLayout>
   );
 }
+
+
