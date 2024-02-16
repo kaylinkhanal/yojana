@@ -1,5 +1,5 @@
 'use client'
-import React , {useState} from 'react';
+import React , {useState, useRef} from 'react';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import toast from 'react-hot-toast';
@@ -25,6 +25,7 @@ const SignupSchema = Yup.object().shape({
 const roles = ['Project Manager', 'Developer', 'Designer', 'Staff', 'Software Engineer']
 
 const Register = () => {
+  const inputRef= useRef(null)
   const router = useRouter()
   const [organization, setOrganization] = useState('gmail')
   const [selectedRole, setSelectedRole] = useState('')
@@ -43,10 +44,21 @@ const Register = () => {
   });
   const handleRegister = async(inputFields)=>{
     try{
+      const formdata = new FormData()
+
+      formdata.append('avatar', inputRef.current.files[0])
+      for (let item in inputFields){
+        formdata.append(item, inputFields[item])
+      }
+
+      // 
+      // formdata.append('email', inputFields.email)
+      // formdata.append('fullName', inputFields.fullName)
+      // formdata.append('organization', inputFields.organization)
+
       const res = await fetch('http://localhost:8080/register/',{
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(inputFields)
+        body:formdata
       })
       const data = await res.json()
 
@@ -66,6 +78,7 @@ const Register = () => {
     }
   
   }
+
   return(
   <FormSection>
     <h1>Signup</h1>
@@ -125,7 +138,8 @@ const Register = () => {
           labelPlacement="outside"
         />
        {formik?.errors.password}
-       
+          <br/>
+          Profile picture:<input ref={inputRef} type="file"/>
           <br/>
           <Dropdown >
             <DropdownTrigger >

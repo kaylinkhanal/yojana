@@ -11,6 +11,7 @@ const userSchema = new Schema({
     enum : ['Project Manager', 'Developer', 'Designer', 'Staff', 'Software Engineer'],
     default: 'Staff'
     },
+    avatar: String
 });
 
 

@@ -71,12 +71,7 @@ const page = () => {
             <div className="flex items-center gap-4">
               <Dropdown placement="bottom-end">
                 <DropdownTrigger>
-                  <Avatar
-                    isBordered
-                    as="button"
-                    className="transition-transform"
-                    src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
-                  />
+                  <Image src='http://localhost:8080/avatar/65cec20e0d6e0413d953c9b1' width={100} height={100} alt="test"/ >
                 </DropdownTrigger>
                 <DropdownMenu aria-label="Profile Actions" variant="flat">
                   <DropdownItem key="profile" className="h-14 gap-2">

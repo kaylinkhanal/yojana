@@ -2,10 +2,13 @@ const User = require('../models/user')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-
+const path =require('path')
 const saltRounds = 10;
 const registerNewUser = async(req, res) => {
+
+  
   try{
+
     const existingUser = await  User.findOne({email: req.body.email})
     //if user email already exist, return 403, else create User doc
     if(existingUser){
@@ -15,6 +18,7 @@ const registerNewUser = async(req, res) => {
     }else{
       const hashPassword = await bcrypt.hash(req.body.password, saltRounds)
       req.body.password = hashPassword
+      req.body.avatar = req.file.filename
       await User.create(req.body)
       res.json({
         msg: "registered successfully"
@@ -103,4 +107,17 @@ const changePassword = async (req, res) => {
 
 }
 
-module.exports = {loginUser, registerNewUser,getAllUsers, changePassword}
+
+console.log()
+
+const getUserAvatar =  async(req,res)=> {
+  try{
+    const userDetail = await User.findById(req.params.id)
+    res.sendFile(path.join(__dirname,'../../uploads/avatar',userDetail.avatar))
+  }catch(err){
+    console.log(err)
+    res.status(400).json({ msg: "Failed to get avatar" });
+  }
+
+}
+module.exports = {loginUser, registerNewUser,getAllUsers, changePassword,getUserAvatar}
