@@ -15,7 +15,7 @@ const page = () => {
   const [userList, setUserList] = useState([]);
   const [selectedProject, setSelectedProject] = useState({})
   const fetchProjectList = async () => {
-    const res = await fetch(`http://localhost:8080/projects`);
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/projects`);
     const data = await res.json();
     setProjectList(data.projectList);
   };

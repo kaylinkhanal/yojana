@@ -96,18 +96,16 @@ const UserTable = (props) => {
       </TableHeader>
       <TableBody items={props.userList}>
         {(item) => (
-          <TableRow key={item}>
+          <TableRow key={item} className={
+            item?._id === props.currentUserId
+              ? "p-2 bg-red-100"
+              : null
+          }>
             {(columnKey) => {
               return (
                 <TableCell>
                   {" "}
-                  <div
-                    className={
-                      item?._id === props.currentUserId
-                        ? "p-2 bg-red-100"
-                        : null
-                    }
-                  >
+                  <div>
                     {renderCell(item, columnKey)}
                   </div>
                 </TableCell>
@@ -146,6 +144,7 @@ const Page = () => {
         initialPage={1}
         loop={true}
         page={1}
+        className="w-full"
       />
     </div>
   );
