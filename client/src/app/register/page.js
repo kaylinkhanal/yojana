@@ -139,7 +139,7 @@ const Register = () => {
         />
        {formik?.errors.password}
           <br/>
-          Profile picture:<input ref={inputRef} type="file"/>
+          Profile picture:<Field ref={inputRef} type="file"/>
           <br/>
           <Dropdown >
             <DropdownTrigger >

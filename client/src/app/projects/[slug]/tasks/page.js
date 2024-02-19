@@ -23,6 +23,7 @@ const sortableOptions = {
 export default function App() {
   const { selectedProjectId } = useSelector(state => state.project)
   const inputRef = useRef([])
+  const [selectedModalTask, setSelectedModalTask]= useState({})
   const [activeForm, setActiveForm] = useState(1)
   const [sprintsList, setSprintsList] = useState([]);
   const handleActiveForm = (index) => {
@@ -62,14 +63,23 @@ export default function App() {
   useEffect(() => {
 const handleChange= (e)=>{
   const inputId =e.target.getAttribute('data-arrayId')
-  const sprintName = inputRef.current[inputId].value
+  const sprintId = e.target.getAttribute('data-sprintId') 
+  const summary = inputRef.current[inputId].value
     if (e.key === "Enter" && inputRef.current[inputId]) {
       const tempSprintsList = [...sprintsList]
         tempSprintsList[inputId].tasks.push({
-          sprintName: sprintName,
-          id: inputId
+          summary: summary,
+          id: inputId,
+          description: '',
+          assignee: '',
+          sprint: '',
+          issueType: '',
+          project:''
       })
+
+      createTasks(sprintId, summary)
       setSprintsList(tempSprintsList)
+      inputRef.current[inputId].value=''
     }
 }
 
@@ -82,14 +92,28 @@ return () => {
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-
+  const changeSprintInfo= (sprintId,taskId)=>{
+    onOpen()
+    setSelectedModalTask(sprintsList[sprintId].tasks[taskId])
+  }
   // }, []);
+
+const changeFormDetails =(e, fieldType)=>{
+  const tempSelectedSprint = {...selectedModalTask}
+  tempSelectedSprint[fieldType] =e.target.value
+  setSelectedModalTask(tempSelectedSprint)
+}
+
+
+
+
+
   return (
     <AdminLayout>
       <div className="flex flex-col items-end gap-4">
         <Button onClick={addSprint}>Create Sprint</Button>
-
-        {JSON.stringify(sprintsList)}
+{/* 
+        {JSON.stringify(sprintsList)} */}
         <ReactSortable
           className="w-full"
           list={sprintsList} setList={setSprintsList} {...sortableOptions}>
@@ -115,8 +139,8 @@ return () => {
                     <div>
                       <div
                         key={taskItem.id}
-                        className="p-4 m-2 bg-white" onClick={onOpen}>
-                        {taskItem.sprintName}
+                        className="p-4 m-2 bg-white" onClick={()=>changeSprintInfo(sprintId,taskId)}>
+                        {taskItem.summary}
                       </div>
 
                     </div>
@@ -146,6 +170,7 @@ return () => {
 
                       <input
                         data-arrayId={sprintId}
+                        data-sprintId={sprintItem._id}
                         ref={(element)=>inputRef.current[sprintId]= element }
                         placeholder="Enter issue title?"
                         className="w-full focus:outline-none"
@@ -160,7 +185,7 @@ return () => {
       </div>
 
       <Modal
-                        title={'test'}
+                        title={'Change Ticket Info'}
                         isOpen={isOpen}
                         onOpen={onOpen}
                         onOpenChange={onOpenChange}
@@ -172,9 +197,11 @@ return () => {
       <div className="w-full flex flex-col items-start gap-3">
 
         <div className="flex flex-col items-start gap-1 w-full">
-          <label htmlFor="">Summary</label>
+          {JSON.stringify(selectedModalTask)} <label htmlFor="">Summary</label>
           <textarea
+            value={selectedModalTask.summary}
             name=""
+            onChange={(e)=>changeFormDetails(e,'summary')}
             id=""
             rows="4"
             className="w-full border border-gray-500 focus:outline-none p-2"
@@ -184,7 +211,9 @@ return () => {
           <label htmlFor="">Description</label>
           <textarea
             name=""
+            value={selectedModalTask.description}
             id=""
+            onChange={(e)=>changeFormDetails(e,'description')}
             rows="4"
             className="w-full border border-gray-500 focus:outline-none p-2"
           ></textarea>
