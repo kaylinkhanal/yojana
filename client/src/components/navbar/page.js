@@ -88,7 +88,11 @@ const page = () => {
                       Profile
                     </Link>
                   </DropdownItem>
-                  <DropdownItem key="team_settings">Team Settings</DropdownItem>
+                  <DropdownItem key="team_settings">
+                  <Link color="foreground" href="/change-password" >
+                      Change Password
+                    </Link>
+                  </DropdownItem>
                   <DropdownItem key="analytics">Analytics</DropdownItem>
                   <DropdownItem key="system">System</DropdownItem>
                   <DropdownItem key="configurations">
