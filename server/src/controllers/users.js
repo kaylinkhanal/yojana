@@ -108,16 +108,21 @@ const changePassword = async (req, res) => {
 }
 
 
-console.log()
+
 
 const getUserAvatar =  async(req,res)=> {
   try{
     const userDetail = await User.findById(req.params.id)
-    res.sendFile(path.join(__dirname,'../../uploads/avatar',userDetail.avatar))
+    console.log(userDetail)
+    if(userDetail.avatar){
+      res.sendFile(path.join(__dirname,'../../uploads/avatar',userDetail.avatar))
+    }else{
+      res.sendFile(path.join(__dirname,'../../uploads/avatar','default.jpeg'))
+    }
+    
   }catch(err){
     console.log(err)
     res.status(400).json({ msg: "Failed to get avatar" });
   }
-
 }
 module.exports = {loginUser, registerNewUser,getAllUsers, changePassword,getUserAvatar}

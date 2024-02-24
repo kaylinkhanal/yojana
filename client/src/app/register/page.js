@@ -50,12 +50,6 @@ const Register = () => {
       for (let item in inputFields){
         formdata.append(item, inputFields[item])
       }
-
-      // 
-      // formdata.append('email', inputFields.email)
-      // formdata.append('fullName', inputFields.fullName)
-      // formdata.append('organization', inputFields.organization)
-
       const res = await fetch('http://localhost:8080/register/',{
         method: 'POST',
         body:formdata
@@ -139,7 +133,7 @@ const Register = () => {
         />
        {formik?.errors.password}
           <br/>
-          Profile picture:<Field ref={inputRef} type="file"/>
+          Profile picture:<Input ref={inputRef} type="file"/>
           <br/>
           <Dropdown >
             <DropdownTrigger >

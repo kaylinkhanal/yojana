@@ -12,10 +12,8 @@ const addNewSprints = async (req, res) => {
 
 const getAllSprintsByProjectId = async (req, res) => {
     try{
-        const sprintList= await Sprint.find({projectId:req.params.id})
+        const sprintList= await Sprint.find({projectId:req.params.projectId}).populate('tasks')
         res.json({sprintList})
-        
-
     }catch(err){
         console.log(err)
     }

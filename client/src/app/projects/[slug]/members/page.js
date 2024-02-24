@@ -1,24 +1,25 @@
-'use client'
-import React, { useEffect } from "react";
+import React from "react";
 import AdminLayout from "@/components/adminLayout/page";
-import { useSelector } from "react-redux";
+
 import axios from "axios";
-const page = ({params}) => {
-  const  {selectedProjectId}= useSelector(state=>state.project)
-  
-  const fetchMembers  = async()=>{
-    const {data} = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/members/${selectedProjectId}`)
-    alert(JSON.stringify(data))
+
+async function getData() {
+  const res = await fetch('http://localhost:8080/members/65cac7b0ab1ce818de56d769')
+  if (!res.ok) {
+    throw new Error('Failed to fetch data')
   }
-  useEffect(()=>{
-    fetchMembers()
-  },[])
+  return res.json()
+}
+const page = async({params}) => {
+  const data = await getData()
+
   return (
     <AdminLayout>
-      <div></div>
-      Hello I am members<p>{params.slug}</p>
+      <div>hello</div>
+    {JSON.stringify(data)}
     </AdminLayout>
   );
 };
 
 export default page;
+console.log("Hi")

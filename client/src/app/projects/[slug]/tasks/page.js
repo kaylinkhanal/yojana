@@ -9,6 +9,7 @@ import Modal from "@/components/modal/page";
 import { Listbox, ListboxItem } from "@nextui-org/react";
 import { FaXmark } from "react-icons/fa6";
 import { Button, Chip, Select,useDisclosure, SelectItem } from "@nextui-org/react";
+import toast from "react-hot-toast";
 
 const sortableOptions = {
   animation: 150,
@@ -22,9 +23,11 @@ const sortableOptions = {
 
 export default function App() {
   const { selectedProjectId } = useSelector(state => state.project)
+  const {userDetails} = useSelector(state=>state.user)
   const inputRef = useRef([])
   const [selectedModalTask, setSelectedModalTask]= useState({})
   const [activeForm, setActiveForm] = useState(1)
+  const [memberList, setMemberList] = useState([])
   const [sprintsList, setSprintsList] = useState([]);
   const handleActiveForm = (index) => {
     setActiveForm(index);
@@ -39,8 +42,8 @@ export default function App() {
     }
     existingSprintsList.push(tempSprint)
     setSprintsList(existingSprintsList)
-    await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/sprints`, tempSprint)
-    fetchSprintList()
+    const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/sprints`, tempSprint)
+    if(res.statusText == "OK") fetchSprintList()
   }
 
   const fetchSprintList = async () => {
@@ -49,40 +52,47 @@ export default function App() {
    
   }
 
+  const fetchMembers = async () => {
+    const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/members/${selectedProjectId}`)
+    setMemberList(data.projectList.members)
+  }
+
+
+
   useEffect(() => {
     fetchSprintList()
-    
+    fetchMembers()
   }, [])
 
     const createTasks = async(inputId,sprintName) => {
-       await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/tasks`, {summary: sprintName, sprint: inputId })
+       await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/tasks`, {summary: sprintName, sprint: inputId, assignee: userDetails._id})
     }
   
 
 
   useEffect(() => {
-const handleChange= (e)=>{
-  const inputId =e.target.getAttribute('data-arrayId')
-  const sprintId = e.target.getAttribute('data-sprintId') 
-  const summary = inputRef.current[inputId].value
-    if (e.key === "Enter" && inputRef.current[inputId]) {
-      const tempSprintsList = [...sprintsList]
-        tempSprintsList[inputId].tasks.push({
-          summary: summary,
-          id: inputId,
-          description: '',
-          assignee: '',
-          sprint: '',
-          issueType: '',
-          project:''
-      })
-
-      createTasks(sprintId, summary)
-      setSprintsList(tempSprintsList)
-      inputRef.current[inputId].value=''
+    const handleChange= (e)=>{
+      const inputId =e.target.getAttribute('data-arrayId')
+      const sprintId = e.target.getAttribute('data-sprintId') 
+      const summary = inputRef?.current?.[inputId]?.value
+        if (e.key === "Enter" && inputRef.current[inputId]) {
+          const tempSprintsList = [...sprintsList]
+            tempSprintsList[inputId].tasks.push({
+              summary: summary,
+              id: inputId,
+              description: '',
+              assignee: '',
+              sprint: '',
+              issueType: '',
+              project:''
+          })
+    
+          createTasks(sprintId, summary)
+          setSprintsList(tempSprintsList)
+          inputRef.current[inputId].value=''
+        }
     }
-}
-
+    
 document.body.addEventListener("keydown", handleChange)
 //return can have a clean up functions
 return () => {
@@ -92,28 +102,47 @@ return () => {
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-  const changeSprintInfo= (sprintId,taskId)=>{
+  const changeSprintInfo= (sprintId,taskId, taksUniqueId)=>{
     onOpen()
     setSelectedModalTask(sprintsList[sprintId].tasks[taskId])
   }
   // }, []);
 
-const changeFormDetails =(e, fieldType)=>{
+const changeFormDetails =(e, fieldType, id)=>{
   const tempSelectedSprint = {...selectedModalTask}
-  tempSelectedSprint[fieldType] =e.target.value
+  if(e?.target?.value){
+    tempSelectedSprint[fieldType] =e?.target.value
+  }else {
+    tempSelectedSprint[fieldType] = id
+  }
   setSelectedModalTask(tempSelectedSprint)
 }
 
 
+const updateTaskInfo = async()=> {
+  const {data} = await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/tasks/${selectedModalTask._id}`, selectedModalTask)
+  onOpenChange()
+  toast( data.msg,
+    {
+      icon:  '✅' ,
+      style: {
+        borderRadius: '10px',
+        background: '#333',
+        color: '#fff',
+      },
+    }
+  );
+}
 
-
-
+const assignedMembers = memberList?.find((item=>{
+  if(item._id === selectedModalTask.assignee){
+  return item
+}}))
   return (
     <AdminLayout>
       <div className="flex flex-col items-end gap-4">
         <Button onClick={addSprint}>Create Sprint</Button>
-{/* 
-        {JSON.stringify(sprintsList)} */}
+
         <ReactSortable
           className="w-full"
           list={sprintsList} setList={setSprintsList} {...sortableOptions}>
@@ -139,7 +168,7 @@ const changeFormDetails =(e, fieldType)=>{
                     <div>
                       <div
                         key={taskItem.id}
-                        className="p-4 m-2 bg-white" onClick={()=>changeSprintInfo(sprintId,taskId)}>
+                        className="p-4 m-2 bg-white" onClick={()=>changeSprintInfo(sprintId,taskId,taskItem._id)}>
                         {taskItem.summary}
                       </div>
 
@@ -167,7 +196,7 @@ const changeFormDetails =(e, fieldType)=>{
                         <option value="feature">Feature</option>
                         <option value="bug">Bug</option>
                       </select>
-
+                       
                       <input
                         data-arrayId={sprintId}
                         data-sprintId={sprintItem._id}
@@ -197,7 +226,7 @@ const changeFormDetails =(e, fieldType)=>{
       <div className="w-full flex flex-col items-start gap-3">
 
         <div className="flex flex-col items-start gap-1 w-full">
-          {JSON.stringify(selectedModalTask)} <label htmlFor="">Summary</label>
+         <label htmlFor="">Summary</label>
           <textarea
             value={selectedModalTask.summary}
             name=""
@@ -226,58 +255,35 @@ const changeFormDetails =(e, fieldType)=>{
             <div className="w-full flex items-center justify-between gap-4">
               <p className="w-1/2 font-medium">Assignee</p>
               <div className="w-1/2">
-                {/* <Select
-                  items={projectMembers}
-                  variant="bordered"
-                  isMultiline={true}
-                  selectionMode="multiple"
-                  placeholder="Assigne"
-                  labelPlacement="outside"
-                  classNames={{
-                    base: "max-w-xs",
-                    trigger: "min-h-unit-12 py-2",
-                  }}
-                  renderValue={(items) => {
-                    return (
-                      <div className="flex flex-wrap gap-2">
-                        {items.map((item) => (
-                          <Chip key={item.key}>{item.data.fullName}</Chip>
-                        ))}
-                      </div>
-                    );
-                  }}
-                >
-                  {(user) => (
-                    <SelectItem key={user._id} textValue={user.fullName}>
-                      <div className="flex gap-2 items-center">
-                        <div className="flex flex-col">
-                          <span className="text-small">{user.fullName}</span>
-                          <span className="text-tiny text-default-400">
-                            {user.email}
-                          </span>
-                        </div>
-                      </div>
-                    </SelectItem>
-                  )}
-                </Select> */}
+                <Select
+        placeholder={assignedMembers?.fullName || 'Select Assignee'}
+        value="f"
+        className="max-w-xs"
+      >
+        {memberList.map((item) => (
+          <SelectItem key={item._id}   onClick={(e)=>changeFormDetails(null,'assignee',item._id)}value={item.fullName}>
+            {item.fullName}
+          </SelectItem>
+        ))}
+      </Select>
               </div>
             </div>
-            <div className="w-full flex items-center justify-between gap-4">
+            {/* <div className="w-full flex items-center justify-between gap-4">
               <p className="w-1/2 font-medium">Sprint</p>
               <p className="w-1/2 text-lg">test</p>
-            </div>
+            </div> */}
             <div className="w-full flex items-center justify-between gap-4">
-              <p className="w-1/2 font-medium">Issue Type</p>
+              {/* <p className="w-1/2 font-medium">Issue Type</p>
               <div className="w-1/2">
                 <select name="" id="" className="focus:outline-none">
                   <option value="feature">Feature</option>
                   <option value="bug">Bug</option>
                 </select>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
-        <button className="bg-blue-700 text-white py-1 px-2">
+        <button onClick={updateTaskInfo} className="bg-blue-700 text-white py-1 px-2">
           Save Changes
         </button>
       </div>
